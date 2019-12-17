@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(janitor)
 library(sf)
+library(here)
 ```
 
 
@@ -28,7 +29,7 @@ dog_descriptions <- readr::read_csv('https://raw.githubusercontent.com/rfordatas
 ```
 
 
-```{r}
+```{r total map}
 state_loc <- data.frame("state" = state.name,
                         "long" = state.center$x,
                         "lat" = state.center$y) %>% 
@@ -54,8 +55,8 @@ ggplot() +
   geom_polygon(data = states_polygon,
                mapping = aes(x = long, y = lat,
                              group = group),
-               fill = "black",
-               color = "gray",
+               fill = "white",
+               color = "gray70",
                size = 0.3) +
   geom_sf(data = dog_moves_us,
           aes(color = total),
@@ -64,6 +65,7 @@ ggplot() +
   scale_color_gradientn(colors = myPalette(3)) +
   theme_void() +
   labs(color = "Total number of \nadoptable dogs")
-  
+
+ggsave(here("figure", "total number of adoptable dogs.jpg"))
 ```
 
