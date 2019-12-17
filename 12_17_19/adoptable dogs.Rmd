@@ -29,24 +29,41 @@ dog_descriptions <- readr::read_csv('https://raw.githubusercontent.com/rfordatas
 
 
 ```{r}
-states <- map_data("state") %>% 
-  group_by(region) %>% 
-  summarize(long = round(mean(long), 5),
-            lat = round(mean(lat), 5))
-
-dog_moves$location <- tolower(dog_moves$location)
+state_loc <- data.frame("state" = state.name,
+                        "long" = state.center$x,
+                        "lat" = state.center$y) %>% 
+  filter(state != "Alaska") %>% 
+  filter(state != "Hawaii")
 
 dog_moves_us <- dog_moves %>% 
   filter(inUS == TRUE) %>% 
-  rename(region = location) %>% 
-  left_join(states, by = "region") %>% 
+  rename(state = location) %>% 
+  left_join(state_loc, by = "state") %>% 
   drop_na(long, lat)
 
-st_as_sf(dog_moves_us, coords = c('long', 'lat'))
+dog_moves_us <- st_as_sf(dog_moves_us, coords = c('long', 'lat'))
 
 st_crs(dog_moves_us) <- 4326
 
-summary(dog_moves_us)
 
+states_polygon <- map_data("state")
+
+myPalette <- colorRampPalette(c("cyan", "#007FFF", "yellow", "#FFBF00", "orange"))
+
+ggplot() +
+  geom_polygon(data = states_polygon,
+               mapping = aes(x = long, y = lat,
+                             group = group),
+               fill = "black",
+               color = "gray",
+               size = 0.3) +
+  geom_sf(data = dog_moves_us,
+          aes(color = total),
+          size = 3,
+          alpha = 0.6) +
+  scale_color_gradientn(colors = myPalette(3)) +
+  theme_void() +
+  labs(color = "Total number of \nadoptable dogs")
+  
 ```
 
