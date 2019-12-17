@@ -1,0 +1,52 @@
+---
+title: "adoptable dogs"
+author: "Shuhan Song"
+date: "12/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(sf)
+```
+
+
+```{r}
+# Get the Data
+
+dog_moves <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-17/dog_moves.csv')
+
+dog_travel <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-17/dog_travel.csv') 
+
+dog_descriptions <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-17/dog_descriptions.csv')
+
+```
+
+
+```{r}
+states <- map_data("state") %>% 
+  group_by(region) %>% 
+  summarize(long = round(mean(long), 5),
+            lat = round(mean(lat), 5))
+
+dog_moves$location <- tolower(dog_moves$location)
+
+dog_moves_us <- dog_moves %>% 
+  filter(inUS == TRUE) %>% 
+  rename(region = location) %>% 
+  left_join(states, by = "region") %>% 
+  drop_na(long, lat)
+
+st_as_sf(dog_moves_us, coords = c('long', 'lat'))
+
+st_crs(dog_moves_us) <- 4326
+
+summary(dog_moves_us)
+
+```
+
