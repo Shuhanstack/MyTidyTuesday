@@ -28,6 +28,101 @@ dog_descriptions <- readr::read_csv('https://raw.githubusercontent.com/rfordatas
 
 ```
 
+# What dogs are waiting to be adopted?
+
+```{r, include=FALSE}
+head(dog_descriptions)
+```
+mixed vs. pure
+```{r}
+dog_breed_mixed <- dog_descriptions %>% 
+  filter(breed_unknown == FALSE) %>% 
+  count(breed_mixed) %>% 
+  mutate(pct = round(n/sum(n), 2))
+
+ggplot(data = dog_breed_mixed,
+       aes(x = "", y = n, fill = breed_mixed)) +
+  geom_bar(alpha = 0.75, 
+           width = 1, 
+           stat = "identity", 
+           show.legend = FALSE) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values=c("#E69E00", "#56B4C9")) +
+  #or scale_fill_brewer(palette="Dark2") +
+  geom_text(aes(y = 50000), label = "Pure (29%)", size = 4) +
+  geom_text(aes(y = 20000), label = "Mixed (71%)", size = 4) +
+  labs(x = "",
+       y = "Mixed breeded or not?",
+       caption = "Mixeded breeded (n = 41591) vs. pure (n = 16589)") +
+  theme_minimal() +
+  theme(axis.text.x=element_blank())
+```
+
+female vs. male
+
+```{r}
+dog_sex <- dog_descriptions %>% 
+  filter(sex != "Unknown") %>% 
+  count(sex) %>% 
+  mutate(pct = round(n/sum(n), 2))
+```
+
+```{r}
+ggplot(data = dog_sex,
+       aes(x = "", y = n, fill = sex)) +
+  geom_bar(alpha = 0.7, 
+           width = 1, 
+           stat = "identity", 
+           show.legend = FALSE) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values=c("#A690A0", "#A0B469")) +
+  #or scale_fill_brewer(palette="Dark2") +
+  geom_text(aes(y = 43000), label = "Female (48%)", size = 4) +
+  geom_text(aes(y = 15000), label = "Male (52%)", size = 4) +
+  labs(x = "",
+       y = "Females or males?",
+       caption = "Female (n = 27883) vs. male (n = 30294)") +
+  theme_minimal() +
+  theme(axis.text.x=element_blank())
+
+```
+age?
+
+```{r}
+dog_age <- dog_descriptions %>%  
+  count(age) %>% 
+  mutate(pct = round(n/sum(n), 2))
+```
+
+```{r}
+ggplot(data = dog_age,
+       aes(x = "", y = n, fill = age)) +
+  geom_bar(alpha = 0.75, 
+           width = 1, 
+           stat = "identity", 
+           show.legend = FALSE) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values=c("#56B4C9", "#9071FF", "#889E0F", "#FFBF60")) +
+  #or scale_fill_brewer(palette="Dark2") +
+  geom_text(aes(y = 43000), label = "Adult (48%)", size = 4) +
+  geom_text(aes(y = 25000), label = "Baby (16%)", size = 3.2) +
+  geom_text(aes(y = 18000), label = "Senior (8%)", size = 3) +
+  geom_text(aes(y = 10000), label = "Young (28%)", size = 4) +
+  labs(x = "",
+       y = "How old are the dogs?",
+       caption = "Baby (n = 9397), young (n = 16194), adult (n = 27955), senior (n = 4634)") +
+  theme_minimal() +
+  theme(axis.text.x=element_blank())
+```
+
+names?
+
+```{r}
+
+```
+
+
+# Where are the dogs?
 
 ```{r total map}
 state_loc <- data.frame("state" = state.name,
@@ -65,7 +160,9 @@ ggplot() +
   scale_color_gradientn(colors = myPalette(2.7)) +
   theme_void() +
   labs(color = "Total number of \nadoptable dogs")
+```
 
+```{r, eval=FALSE}
 ggsave(here("figure", "total number of adoptable dogs.jpg"))
 ```
 
@@ -77,6 +174,8 @@ summary(dog_moves_outside_us)
 
 # lack of data outside US
 ```
+
+# Where are dogs found?
 
 ```{r, include=FALSE}
 head(dog_travel)
@@ -115,14 +214,17 @@ ggplot(data = dog_found_10,
        aes(x = fct_reorder(found, n), 
            y = n)) +
   geom_col(aes(fill = found),
+           width = 0.6,
            show.legend = FALSE) +
   scale_fill_brewer(type = "qual", palette = 3) +
   coord_flip() +
   theme_minimal(base_line_size = 0.35) +
   labs(x = "US State", y = "",
        title = "Numbers of dogs found in top 10 states")
-
-ggsave(here("figure", "numbers of dogs found in top 10 states.jpg"))
-
 ```
+
+```{r, eval=FALSE}
+ggsave(here("figure", "numbers of dogs found in top 10 states.jpg"))
+```
+
 
