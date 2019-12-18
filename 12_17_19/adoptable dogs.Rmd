@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 ```{r}
@@ -58,6 +58,10 @@ ggplot(data = dog_breed_mixed,
   theme(axis.text.x=element_blank())
 ```
 
+```{r, eval=FALSE}
+ggsave(here("figure", "breeding types.jpg"))
+```
+
 female vs. male
 
 ```{r}
@@ -86,6 +90,11 @@ ggplot(data = dog_sex,
   theme(axis.text.x=element_blank())
 
 ```
+
+```{r, eval=FALSE}
+ggsave(here("figure", "dogs' sex.jpg"))
+```
+
 age?
 
 ```{r}
@@ -105,8 +114,8 @@ ggplot(data = dog_age,
   scale_fill_manual(values=c("#56B4C9", "#9071FF", "#889E0F", "#FFBF60")) +
   #or scale_fill_brewer(palette="Dark2") +
   geom_text(aes(y = 43000), label = "Adult (48%)", size = 4) +
-  geom_text(aes(y = 25000), label = "Baby (16%)", size = 3.2) +
-  geom_text(aes(y = 18000), label = "Senior (8%)", size = 3) +
+  geom_text(aes(y = 25000), label = "Baby (16%)", size = 4) +
+  geom_text(aes(y = 18000), label = "Senior (8%)", size = 4) +
   geom_text(aes(y = 10000), label = "Young (28%)", size = 4) +
   labs(x = "",
        y = "How old are the dogs?",
@@ -115,12 +124,9 @@ ggplot(data = dog_age,
   theme(axis.text.x=element_blank())
 ```
 
-names?
-
-```{r}
-
+```{r, eval=FALSE}
+ggsave(here("figure", "how old are the dogs.jpg"))
 ```
-
 
 # Where are the dogs?
 
