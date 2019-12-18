@@ -49,7 +49,7 @@ st_crs(dog_moves_us) <- 4326
 
 states_polygon <- map_data("state")
 
-myPalette <- colorRampPalette(c("cyan", "#007FFF", "yellow", "#FFBF00", "orange"))
+myPalette <- colorRampPalette(c("cyan", "#007FFF","#FFBF00", "orange", "red"))
 
 ggplot() +
   geom_polygon(data = states_polygon,
@@ -62,10 +62,67 @@ ggplot() +
           aes(color = total),
           size = 3,
           alpha = 0.6) +
-  scale_color_gradientn(colors = myPalette(3)) +
+  scale_color_gradientn(colors = myPalette(2.7)) +
   theme_void() +
   labs(color = "Total number of \nadoptable dogs")
 
 ggsave(here("figure", "total number of adoptable dogs.jpg"))
+```
+
+```{r, include=FALSE}
+dog_moves_outside_us <- dog_moves %>% 
+  filter(inUS == FALSE)
+
+summary(dog_moves_outside_us)
+
+# lack of data outside US
+```
+
+```{r, include=FALSE}
+head(dog_travel)
+unique(dog_travel$found)
+length(dog_travel$found)
+```
+
+```{r}
+dog_found_30 <- dog_travel %>% 
+  count(found) %>% 
+  arrange(desc(n)) %>% 
+  head(30)
+
+dog_found_30[3, 1] <- "Virginia"
+
+dog_found_30[4, 1] <- "North Carolina"
+
+dog_found_30[5, 1] <- "Maryland"
+
+dog_found_30[15, 1] <- "New Jersey"
+
+dog_found_30[22, 1] <- "US"
+
+dog_found_30[24, 1] <- "Seattle"
+
+dog_found_10 <- dog_found_30 %>% 
+  filter(!found %in% c("US", "Lab Rescue LRCP", "Puerto Rico")) %>% 
+  group_by(found) %>% 
+  summarize(n = sum(n)) %>% 
+  arrange(desc(n)) %>% 
+  head(10)
+```
+
+```{r}
+ggplot(data = dog_found_10, 
+       aes(x = fct_reorder(found, n), 
+           y = n)) +
+  geom_col(aes(fill = found),
+           show.legend = FALSE) +
+  scale_fill_brewer(type = "qual", palette = 3) +
+  coord_flip() +
+  theme_minimal(base_line_size = 0.35) +
+  labs(x = "US State", y = "",
+       title = "Numbers of dogs found in top 10 states")
+
+ggsave(here("figure", "numbers of dogs found in top 10 states.jpg"))
+
 ```
 
