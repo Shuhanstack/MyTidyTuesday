@@ -104,6 +104,10 @@ dog_age <- dog_descriptions %>%
 ```
 
 ```{r}
+library(colorspace)
+
+pal <- choose_palette()
+  
 ggplot(data = dog_age,
        aes(x = "", y = n, fill = age)) +
   geom_bar(alpha = 0.75, 
@@ -111,7 +115,7 @@ ggplot(data = dog_age,
            stat = "identity", 
            show.legend = FALSE) +
   coord_polar("y", start=0) +
-  scale_fill_manual(values=c("#56B4C9", "#9071FF", "#889E0F", "#FFBF60")) +
+  scale_fill_manual(values=pal(4)) +
   #or scale_fill_brewer(palette="Dark2") +
   geom_text(aes(y = 43000), label = "Adult (48%)", size = 4) +
   geom_text(aes(y = 25000), label = "Baby (16%)", size = 4) +
