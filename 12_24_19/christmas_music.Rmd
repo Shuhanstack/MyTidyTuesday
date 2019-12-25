@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
-```{r}
+```{r, include=FALSE}
 christmas_songs <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-24/christmas_songs.csv")
 
 christmas_lyrics <- readr::read_tsv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-24/christmas_lyrics.tsv")
@@ -22,6 +22,8 @@ library(tidyverse)
 library(colorspace)
 library(here)
 ```
+
+### Who is the most popular performer?
 
 ```{r}
 popular_performer <- christmas_songs %>% 
@@ -62,9 +64,11 @@ library(wordcloud)
 library(RColorBrewer)
 ```
 
+### Lyric word cloud
+
 Method from: http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know
 
-```{r}
+```{r, include=FALSE}
 lyric_corp <- Corpus(VectorSource(lyric))
 
 inspect(lyric_corp)
@@ -88,7 +92,7 @@ lyric_corp <- tm_map(lyric_corp, stripWhitespace)
 # docs <- tm_map(docs, stemDocument)
 ```
 
-```{r}
+```{r, include=FALSE}
 dtm <- TermDocumentMatrix(lyric_corp)
 m <- as.matrix(dtm)
 v <- sort(rowSums(m),decreasing=TRUE)
