@@ -14,6 +14,7 @@ christmas_songs <- readr::read_csv("https://raw.githubusercontent.com/rfordatasc
 
 christmas_lyrics <- readr::read_tsv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-24/christmas_lyrics.tsv")
 
+summary(christmas_songs)
 ```
 
 ```{r}
@@ -38,7 +39,7 @@ ggplot(popular_performer_year,
            y = fct_reorder(performer, -year))) +
   geom_point(aes(color = 90-peak_position), size = 5, alpha = 0.9) +
   geom_line(aes(color = 90-peak_position), size = 5, alpha = 0.9) +
-  scale_x_continuous(breaks = c(1960, 1970, 1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1960, 1970, 1980, 1990, 2000, 2010), limits = c(1958, 2017)) +
   scale_color_continuous_divergingx(palette = "TealRose", name = "Peak position", labels = c("90", "70", "50", "30", "10")) +
   theme_minimal() +
   labs(x = "", 
@@ -46,5 +47,61 @@ ggplot(popular_performer_year,
   theme(panel.grid.minor.x = element_blank())
 
 ggsave(here("Popular performers.jpg"), width = 8, height = 6)
+```
+
+```{r}
+lyric <- christmas_lyrics$lyric
+
+write.table(lyric, file = "lyric.txt", sep = "")
+```
+
+```{r}
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(RColorBrewer)
+```
+
+Method from: http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know
+
+```{r}
+lyric_corp <- Corpus(VectorSource(lyric))
+
+inspect(lyric_corp)
+```
+
+```{r}
+# Convert the text to lower case
+lyric_corp <- tm_map(lyric_corp, content_transformer(tolower))
+# Remove numbers
+lyric_corp <- tm_map(lyric_corp, removeNumbers)
+# Remove english common stopwords
+lyric_corp<- tm_map(lyric_corp, removeWords, stopwords("english"))
+# Remove your own stop word
+# specify your stopwords as a character vector
+lyric_corp <- tm_map(lyric_corp, removeWords, c("will", "one", "may", "can")) 
+# Remove punctuations
+lyric_corp <- tm_map(lyric_corp, removePunctuation)
+# Eliminate extra white spaces
+lyric_corp <- tm_map(lyric_corp, stripWhitespace)
+# Text stemming
+# docs <- tm_map(docs, stemDocument)
+```
+
+```{r}
+dtm <- TermDocumentMatrix(lyric_corp)
+m <- as.matrix(dtm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v), freq=v)
+d[3, 2] = d[3, 2] +d[4, 2]
+d <- d %>% filter(word != "bell")
+head(d, 30)
+```
+```{r}
+set.seed(1234)
+wordcloud(words = d$word, freq = d$freq, min.freq = 1,
+          max.words=300, random.order=FALSE, rot.per=0.15, 
+          colors=brewer.pal(11, "RdYlGn"))
+
 ```
 
