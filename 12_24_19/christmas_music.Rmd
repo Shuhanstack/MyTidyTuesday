@@ -18,5 +18,33 @@ christmas_lyrics <- readr::read_tsv("https://raw.githubusercontent.com/rfordatas
 
 ```{r}
 library(tidyverse)
+library(colorspace)
+library(here)
+```
+
+```{r}
+popular_performer <- christmas_songs %>% 
+  group_by(year, performer) %>% 
+  summarize(peak_position = min(peak_position))
+
+popular_performer_year <- popular_performer %>% 
+  group_by(year) %>% 
+  summarize(popular_id = which.min(peak_position),
+            performer = performer[popular_id],
+            peak_position = peak_position[popular_id])
+
+ggplot(popular_performer_year,
+       aes(x = year, 
+           y = fct_reorder(performer, -year))) +
+  geom_point(aes(color = 90-peak_position), size = 5, alpha = 0.9) +
+  geom_line(aes(color = 90-peak_position), size = 5, alpha = 0.9) +
+  scale_x_continuous(breaks = c(1960, 1970, 1980, 1990, 2000, 2010)) +
+  scale_color_continuous_divergingx(palette = "TealRose", name = "Peak position", labels = c("90", "70", "50", "30", "10")) +
+  theme_minimal() +
+  labs(x = "", 
+       y = "Most popular performer in...") +
+  theme(panel.grid.minor.x = element_blank())
+
+ggsave(here("Popular performers.jpg"), width = 8, height = 6)
 ```
 
