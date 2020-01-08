@@ -45,17 +45,51 @@ temperature <- readr::read_csv('https://raw.githubusercontent.com/rfordatascienc
 ```
 
 ```{r}
-head(temperature)
-count(temperature, site_name)
+count(temperature, date)
 
 temperature$city_name <- taxize::taxize_capwords(tolower(temperature$city_name))
-
-temperature$site_name <- gtools::capwords(tolower(temperature$site_name))
+head(temperature)
 ```
 
 
 ```{r}
-head(rainfall)
 count(rainfall, station_name, lat)
+head(rainfall)
+```
+
+```{r}
+max_temperature <- temperature  %>% 
+  group_by(city_name, temp_type) %>% 
+  summarize(mean = round(mean(temperature, na.rm = TRUE), 2)) %>% 
+  group_by(city_name) %>% 
+  mutate(city_mean = round(mean(mean), 2))
+
+temperature_clean_date <- temperature %>% 
+  separate(date, c("year", "month", "day"))
+
+temperature_annual <- temperature_clean_date %>% 
+  group_by(city_name, year, temp_type)%>% 
+  summarize(mean = round(mean(temperature, na.rm = TRUE), 2)) %>% 
+  group_by(city_name, year) %>% 
+  mutate(city_annual_mean = round(mean(mean), 2))
+
+temperature_2019 <- temperature_annual %>% 
+  filter(year == "2019")
+
+
+```
+
+```{r}
+ggplot() +
+  geom_point(temperature_annual, 
+       mapping = aes(x =as.numeric(year), y = city_annual_mean, color = city_name), 
+       alpha = 0.2) +
+  geom_line(temperature_annual, 
+       mapping = aes(x =as.numeric(year), y = city_annual_mean, color = city_name), 
+       alpha = 0.2) +
+  geom_point(temperature_2019, 
+       mapping = aes(x = as.numeric(year), y = city_annual_mean, color = city_name), 
+       alpha = 1) +
+  scale_x_continuous(limits = c(2010, 2019))
 ```
 
