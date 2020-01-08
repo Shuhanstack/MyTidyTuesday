@@ -1,0 +1,61 @@
+---
+title: "Australia fires"
+author: "Shuhan Song"
+date: "1/7/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library(mapview)
+library(sf)
+```
+
+Method based on [link](https://gist.github.com/deanmarchiori/cb64f105eb0f6204eaa88323eaa29fdb) by Dean Marchiori
+
+```{r}
+
+url <- "http://www.rfs.nsw.gov.au/feeds/majorIncidents.json"
+
+fires <- st_read(url)
+mapview(fires)
+
+#' Hacky way to get rid of points within geometry collections
+fire_poly <- fires %>% 
+  st_buffer(dist = 0) %>% 
+  st_union(by_feature = TRUE)
+
+mapview(fire_poly)
+```
+
+```{r}
+# Get the Data
+
+rainfall <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-07/rainfall.csv')
+temperature <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-07/temperature.csv')
+
+```
+
+```{r}
+#head(arrange(rainfall, desc(rainfall)))
+```
+
+```{r}
+head(temperature)
+count(temperature, site_name)
+
+temperature$city_name <- taxize::taxize_capwords(tolower(temperature$city_name))
+
+temperature$site_name <- gtools::capwords(tolower(temperature$site_name))
+```
+
+
+```{r}
+head(rainfall)
+count(rainfall, station_name, lat)
+```
+
