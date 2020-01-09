@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(mapview)
 library(sf)
+library(here)
 ```
 
 Method based on [link](https://gist.github.com/deanmarchiori/cb64f105eb0f6204eaa88323eaa29fdb) by Dean Marchiori
@@ -76,7 +77,8 @@ temperature_annual <- temperature_clean_date %>%
 temperature_2019 <- temperature_annual %>% 
   filter(year == "2019")
 
-
+temperature_2019_month <- temperature_clean_date %>% 
+  filter(year == "2019") 
 ```
 
 ```{r}
@@ -90,6 +92,30 @@ ggplot() +
   geom_point(temperature_2019, 
        mapping = aes(x = as.numeric(year), y = city_annual_mean, color = city_name), 
        alpha = 1) +
-  scale_x_continuous(limits = c(2010, 2019))
+  geom_curve(aes(x = 2017.6, y = 23.8, xend = 2018.8, yend = 23.6),
+             size = 0.3,
+             curvature = -0.4,
+             arrow = arrow(length = unit(0.02, "npc"))) +
+  geom_text(aes(x = 2017.5, y = 23.5, label = "The extreme high temperature (Jan-May) \nlead to the worst fire season of Australia \nin 20 years begun in September 2019"),
+            size = 2.5,
+            hjust = 1) +
+  geom_text(aes(x = 2010.1, y = 11.5, label = "Fires across the country have scorched millions of acres of land \nwhere homes were destoryed and people were killed (Popovich, 2020)"),
+            size = 2.5,
+            hjust = 0) +
+  scale_x_continuous(limits = c(2010, 2019), breaks = c(2010, 2013, 2016, 2019)) + 
+  scale_y_continuous(limits = c(10, 25)) +
+  labs(x = "Year", 
+       y = "Mean temperature (Celsius)", 
+       color = "Cities in Australia",
+       caption = "Data source: BoM Climate Data Online.") +
+  theme_minimal() 
+
+ggsave(here("figure", "annual_temperature.jpg"), width = 8, height = 8)
 ```
 
+
+
+
+Reference: 
+
+Popovich, N., Lu, D., & Migliozzi, B. (2020, January 9). See Where Australia’s Deadly Wildfires Are Burning. The New York Times. https://www.nytimes.com/interactive/2020/01/02/climate/australia-fires-map.html
