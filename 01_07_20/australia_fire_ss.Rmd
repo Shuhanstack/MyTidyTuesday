@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, include = FALSE)
 ```
 
 ```{r}
@@ -16,6 +16,8 @@ library(sf)
 library(here)
 ```
 
+### Map the Australia fires
+
 Method based on [link](https://gist.github.com/deanmarchiori/cb64f105eb0f6204eaa88323eaa29fdb) by Dean Marchiori
 
 ```{r}
@@ -23,14 +25,14 @@ Method based on [link](https://gist.github.com/deanmarchiori/cb64f105eb0f6204eaa
 url <- "http://www.rfs.nsw.gov.au/feeds/majorIncidents.json"
 
 fires <- st_read(url)
-mapview(fires)
 
-#' Hacky way to get rid of points within geometry collections
 fire_poly <- fires %>% 
   st_buffer(dist = 0) %>% 
   st_union(by_feature = TRUE)
+```
 
-mapview(fire_poly)
+```{r, include=TRUE}
+mapview(fire_poly, legend = FALSE, col.regions = "red", color = "gray")
 ```
 
 ```{r}
@@ -83,7 +85,7 @@ temperature_2019_month <- temperature_clean_date %>%
 
 ### Temperature 2010-2019
 
-```{r}
+```{r, include=TRUE}
 ggplot() +
   geom_point(temperature_annual, 
        mapping = aes(x =as.numeric(year), y = city_annual_mean, color = city_name), 
@@ -111,7 +113,9 @@ ggplot() +
        color = "Cities in Australia",
        caption = "Data source: Bureau of Meterology Climate Data Online.") +
   theme_minimal() 
+```
 
+```{r}
 ggsave(here("figure", "annual_temperature.jpg"), width = 6, height = 6)
 ```
 
@@ -126,7 +130,7 @@ rainfall_2019 <- rainfall_annual %>%
   filter(year %in% c("2017", "2018", "2019"))
 ```
 
-```{r}
+```{r, include=TRUE}
 ggplot() +
   geom_point(rainfall_annual, 
        mapping = aes(x =as.numeric(year), y = mean, color = city_name), 
@@ -151,11 +155,13 @@ ggplot() +
              size = 0.3,
              curvature = -0.25,
              arrow = arrow(length = unit(0.02, "npc"))) +
-  geom_text(aes(x = 2018.9, y = 5, label = "Rainfall went \nlow since 2017"),
+  geom_text(aes(x = 2018.9, y = 5, label = "Rainfall has been\nlow since 2017"),
             size = 2.5,
             hjust = 1) +
   theme(panel.grid.minor = element_blank())
+```
 
+```{r}
 ggsave(here("figure", "annual_rainfall.jpg"), width = 7, height = 5)
 ```
 
