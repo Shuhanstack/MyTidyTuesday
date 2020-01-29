@@ -1,0 +1,57 @@
+---
+title: "San Francisco Trees"
+author: "Shuhan Song"
+date: "1/28/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(tidyverse)
+library(sf)
+library(tmap)
+```
+
+```{r}
+# Get the Data
+
+sf_trees <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-28/sf_trees.csv')
+
+tree_with_name <- sf_trees %>% 
+  filter(species != "Tree(s) ::") %>% 
+  separate(species, into = c("scientific_name", "common_name"), sep = "::") %>% 
+  filter(latitude != "NA") %>% 
+  select(scientific_name, common_name, address, date, latitude, longitude) %>% 
+  unique() %>% 
+  mutate(full_sci = scientific_name) %>% 
+  separate(scientific_name, into = c("genus", "species"), sep = " ") %>% 
+  select(-species)
+
+
+tree_sf <- st_as_sf(tree_with_name, 
+                    coords = c("longitude", "latitude"), 
+                    crs = 4326) 
+
+
+ca_counties <- read_sf(dsn = ".", layer = "california_county_shape_file", crs = 4326)
+
+```
+
+```{r}
+sf_tree_map <- ggplot(data = ca_counties) +
+  geom_sf(color = "gray90",
+          fill = "gray80",
+          size = 0.1) +
+  geom_sf(data = tree_sf,
+          aes(color = genus),
+          size = 0.2,
+          alpha = 0.3,
+          show.legend = FALSE) +
+  coord_sf(xlim = c(-122.51, -122.36), ylim = c(37.71, 37.81)) +
+  theme_bw()
+
+sf_tree_map
+
+ggsave("SF tree map.jpg")
+```
+
