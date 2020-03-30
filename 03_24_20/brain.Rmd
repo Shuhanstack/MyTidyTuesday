@@ -1,0 +1,95 @@
+---
+title: "Brain Injury Awareness"
+author: "Shuhan Song"
+date: "3/25/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE,
+                      message = FALSE)
+# not using scientific notation in this rmd output
+options(scipen=999)
+
+# attach packages
+
+library(tidyverse)
+library(paletteer)
+```
+
+```{r}
+# tbi: Traumatic Brain Injury (TBI)
+
+# CDC: Brain Injury Awareness Month (March) was established 3 decades ago to raise public awareness about the incidence of brain injury and the needs of persons with brain injuries and their families. Caused by a bump, blow, or jolt to the head, or penetrating head injury, a traumatic brain injury (TBI) can lead to short- or long-term changes affecting thinking, sensation, language, or emotion. One of every 60 people in the U.S. lives with a TBI related disability. Moderate and severe traumatic brain injury (TBI) can lead to a lifetime of physical, cognitive, emotional, and behavioral changes. (https://www.cdc.gov/mmwr/volumes/68/wr/mm6810a1.htm)
+
+
+# read in data
+
+tbi_age <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-24/tbi_age.csv')
+tbi_year <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-24/tbi_year.csv')
+tbi_military <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-24/tbi_military.csv')
+
+```
+
+```{r, eval=FALSE}
+# explore dataset tbi_age
+unique(tbi_age$age_group)
+```
+
+```{r}
+# filter age groups
+age_group <- tbi_age %>% 
+  filter(!age_group %in% c("0-17", "Total")) %>% 
+  mutate(age_group = fct_relevel(age_group, "5-14", after = 1))
+
+age_group$injury_mechanism[age_group$injury_mechanism == "Other or no mechanism specified"] <- "Other"
+  
+age_group$injury_mechanism[age_group$injury_mechanism == "Other unintentional injury, mechanism unspecified"] <- "Other"
+
+age_group$injury_mechanism[age_group$injury_mechanism == "Unintentionally struck by or against an object"] <- "Unintentionally struck by an object"
+
+
+age_group <- age_group %>% 
+  mutate(injury_mechanism = fct_relevel(injury_mechanism, "Other", after = 5)) 
+
+# cases in age groups
+
+ggplot(data = age_group,
+       aes(x = age_group,
+           y = number_est)) +
+  geom_col(aes(fill = injury_mechanism),
+           alpha = 0.7,
+           show.legend = FALSE) +
+  facet_wrap(~injury_mechanism,
+             ncol = 2) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 6),
+        axis.text.y = element_text(size = 6),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.y = element_line(size = 0.2),
+        axis.title = element_text(size = 9)) +
+  labs(x = "Age groups",
+       y = "Estimated cases") +
+  scale_color_paletteer_d("awtools::mpalette")
+  
+  
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
