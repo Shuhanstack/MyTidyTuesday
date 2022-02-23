@@ -111,5 +111,5 @@ p1 = (nofree_pr + free_pr) / (nofree_cl + free_cl)
 
 p1
 
-ggsave("freedom_diff_across_countries.png", p1, width = 8,height=6)
+ggsave("freedom_diff_across_countries.png", p1, width = 7,height=5)
 
