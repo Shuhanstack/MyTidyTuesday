@@ -64,7 +64,7 @@ nofree_cl = ggplot(freedom_nofree, aes(x = year, y = cl)) +
                   labels = c("Low","6","5","4","3","2","High")) +
   theme_minimal()+
   labs(x = "Year",
-       y = "Civil Liberties")+
+       y = "Civil liberties")+
   theme(panel.grid = element_blank(),
         text = element_text(family = "Oswald"))
 
