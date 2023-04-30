@@ -36,7 +36,9 @@ table = winners %>%
             by = c("nationality" = "country_name")) %>% 
   mutate(country_code = country_code_2, 
          .before = nationality) %>% 
-  select(-country_code_2)
+  select(-country_code_2) %>% 
+  mutate(category_icon = category,
+         .after = year)
 
 table
 ```
@@ -44,17 +46,20 @@ table
 ```{r}
 # https://posit.co/blog/new-formatting-functions-in-gt-0-9-0/
 
-color = MetBrewer::met.brewer("OKeeffe2", n = 4, type = "continuous") %>% 
-  c()
+color = MetBrewer::met.brewer("Benedictus", n = 8, type = "continuous") %>% 
+  c()%>% 
+  rev() 
 
 gt(table,
-   rowname_col = "athlete", groupname_col = "category") %>% 
+   rowname_col = "athlete", groupname_col = "category") %>%  
+                            # for two levels of groups: groupname_col = c("group1", "group2)
   cols_label(country_code = "",
              nationality = "Nationality", 
              n_wins = "Count of wins", 
              # time = html("Best record <br>(h:m:s)"), # to make (H:M:S on a second line)
              time = "Best record (h:m:s)", 
-             year = "Best year") %>% 
+             year = "Best year",
+             category_icon = "") %>% 
   tab_stub_indent(rows = everything(), indent = 2) %>% 
   # tab_style(
   #   style = cell_borders(
@@ -73,16 +78,19 @@ gt(table,
   data_color(
     columns = n_wins,
     method = "numeric",
-    palette = color,
+    palette = color[5:8],
     alpha = 0.7
   ) |>
-  fmt_flag(columns = country_code) 
+  fmt_flag(columns = country_code)  %>%
 # Other formatting worth trying:
-  # fmt_image(
-  #   columns = year,
-  #   path = system.file("metro_svg", package = "gt"),
-  #   file_pattern = "metro_{x}.svg"
-  # ) 
-  
+  # svg library: https://www.svgrepo.com/
+  fmt_image(
+    columns = category_icon,
+    path = here::here("2023", "2023-04-25", "svg"),
+    file_pattern = "{x}.svg"
+  )
+ 
+
+ 
 ```
 
