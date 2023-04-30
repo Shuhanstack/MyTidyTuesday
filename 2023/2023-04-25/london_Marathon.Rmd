@@ -1,0 +1,88 @@
+---
+title: "London Marathon Winners"
+author: "Shuhan Song"
+date: "2023-04-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
+library(gt)
+library(tidyverse)
+library(janitor)
+```
+
+```{r echo=FALSE}
+winners <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-04-25/winners.csv') %>% 
+  clean_names()
+london_marathon <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-04-25/london_marathon.csv')
+```
+```{r}
+table = winners %>% 
+  group_by(category, athlete, nationality) %>% 
+  summarize(n_wins = n(),
+            time = min(time, 
+                       na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  mutate(time = hms::hms(lubridate::seconds_to_period(time))) %>% 
+  left_join(winners) %>% 
+  arrange(desc(n_wins)) %>% 
+  slice_head(n = 3,
+             by = category) %>% 
+  left_join(distinct(countrypops,
+                     country_name, country_code_2),
+            by = c("nationality" = "country_name")) %>% 
+  mutate(country_code = country_code_2, 
+         .before = nationality) %>% 
+  select(-country_code_2)
+
+table
+```
+
+```{r}
+# https://posit.co/blog/new-formatting-functions-in-gt-0-9-0/
+
+color = MetBrewer::met.brewer("OKeeffe2", n = 4, type = "continuous") %>% 
+  c()
+
+gt(table,
+   rowname_col = "athlete", groupname_col = "category") %>% 
+  cols_label(country_code = "",
+             nationality = "Nationality", 
+             n_wins = "Count of wins", 
+             # time = html("Best record <br>(h:m:s)"), # to make (H:M:S on a second line)
+             time = "Best record (h:m:s)", 
+             year = "Best year") %>% 
+  tab_stub_indent(rows = everything(), indent = 2) %>% 
+  # tab_style(
+  #   style = cell_borders(
+  #     sides = c("left", "right"),
+  #     weight = px(1),
+  #     color = "gray85"
+  #   ),
+  #   locations = cells_body(columns = c(n_wins, time))
+  # ) %>%
+  opt_stylize(style = 3,  # 1 to 6 styles
+              color = "blue") |> # color be one of "blue", "cyan", "pink", "green", "red", or "gray"
+  opt_all_caps(locations = c("column_labels", "row_group")) %>% 
+  opt_vertical_padding(scale = 0.6) %>% 
+  cols_align(align = "center", columns = c(n_wins, time, year)) %>% 
+  cols_align(align = "left", columns = c("athlete", "nationality")) %>% 
+  data_color(
+    columns = n_wins,
+    method = "numeric",
+    palette = color,
+    alpha = 0.7
+  ) |>
+  fmt_flag(columns = country_code) 
+# Other formatting worth trying:
+  # fmt_image(
+  #   columns = year,
+  #   path = system.file("metro_svg", package = "gt"),
+  #   file_pattern = "metro_{x}.svg"
+  # ) 
+  
+```
+
