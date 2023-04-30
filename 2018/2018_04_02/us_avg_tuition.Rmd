@@ -1,0 +1,44 @@
+---
+title: "US Average Tuition"
+author: "Shuhan Song"
+date: "2023-01-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
+
+library(here)
+library(readxl)
+library(tidyverse)
+
+data_ls = lapply(excel_sheets(here("2018","2018_04_02", "us_avg_tuition.xlsx")), read_excel, path = here("2018","2018_04_02", "us_avg_tuition.xlsx"))
+
+data = data_ls[[1]] %>% 
+  pivot_longer(-1, 
+               names_to = "year",
+               values_to = "tuition") %>% 
+  mutate(year = str_remove(year, "-[0-9]+"))
+```
+
+
+```{r}
+data_summary = data %>% 
+  group_by(year) %>% 
+  mutate(us_avg_tuition = mean(tuition, na.rm = TRUE))
+```
+
+```{r}
+ggplot(data_summary,
+       aes(x = year, 
+           y = tuition, 
+           group = State)) +
+  geom_line(alpha = 0.1) +
+  geom_line(aes(y = us_avg_tuition),
+            color = "black")
+```
+
+
+
