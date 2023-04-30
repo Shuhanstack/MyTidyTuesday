@@ -373,37 +373,42 @@ display: none;
             by = c(&quot;nationality&quot; = &quot;country_name&quot;)) %&gt;% 
   mutate(country_code = country_code_2, 
          .before = nationality) %&gt;% 
-  select(-country_code_2)
+  select(-country_code_2) %&gt;% 
+  mutate(category_icon = category,
+         .after = year)
 
 table</code></pre>
-<pre><code>## # A tibble: 12 × 7
-##    category         athlete       country_code nationality n_wins time      year
-##    &lt;chr&gt;            &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;        &lt;int&gt; &lt;time&gt;   &lt;dbl&gt;
-##  1 Wheelchair Men   David Weir    GB           United Kin…      8 01:29:48  2006
-##  2 Wheelchair Men   David Holding GB           United Kin…      4 01:42:15  1997
-##  3 Wheelchair Men   Heinz Frei    CH           Switzerland      3 01:35:18  1998
-##  4 Wheelchair Women Tanni Grey-T… GB           United Kin…      6 02:00:10  1996
-##  5 Wheelchair Women Francesca Po… IT           Italy            4 01:57:00  2005
-##  6 Wheelchair Women Tatyana McFa… US           United Sta…      4 01:41:14  2015
-##  7 Men              Eliud Kipcho… KE           Kenya            4 02:02:37  2019
-##  8 Men              António Pinto PT           Portugal         3 02:06:36  2000
-##  9 Men              Dionicio Cer… MX           Mexico           3 02:08:30  1995
-## 10 Women            Ingrid Krist… NO           Norway           4 02:21:06  1985
-## 11 Women            Katrin Dörre… DE           Germany          3 02:27:09  1993
-## 12 Women            Mary Jepkosg… KE           Kenya            3 02:17:01  2017</code></pre>
+<pre><code>## # A tibble: 12 × 8
+##    category athlete country_code nationality n_wins time      year category_icon
+##    &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;        &lt;int&gt; &lt;time&gt;   &lt;dbl&gt; &lt;chr&gt;        
+##  1 Wheelch… David … GB           United Kin…      8 01:29:48  2006 Wheelchair M…
+##  2 Wheelch… David … GB           United Kin…      4 01:42:15  1997 Wheelchair M…
+##  3 Wheelch… Heinz … CH           Switzerland      3 01:35:18  1998 Wheelchair M…
+##  4 Wheelch… Tanni … GB           United Kin…      6 02:00:10  1996 Wheelchair W…
+##  5 Wheelch… France… IT           Italy            4 01:57:00  2005 Wheelchair W…
+##  6 Wheelch… Tatyan… US           United Sta…      4 01:41:14  2015 Wheelchair W…
+##  7 Men      Eliud … KE           Kenya            4 02:02:37  2019 Men          
+##  8 Men      Antóni… PT           Portugal         3 02:06:36  2000 Men          
+##  9 Men      Dionic… MX           Mexico           3 02:08:30  1995 Men          
+## 10 Women    Ingrid… NO           Norway           4 02:21:06  1985 Women        
+## 11 Women    Katrin… DE           Germany          3 02:27:09  1993 Women        
+## 12 Women    Mary J… KE           Kenya            3 02:17:01  2017 Women</code></pre>
 <pre class="r"><code># https://posit.co/blog/new-formatting-functions-in-gt-0-9-0/
 
-color = MetBrewer::met.brewer(&quot;OKeeffe2&quot;, n = 4, type = &quot;continuous&quot;) %&gt;% 
-  c()
+color = MetBrewer::met.brewer(&quot;Benedictus&quot;, n = 8, type = &quot;continuous&quot;) %&gt;% 
+  c()%&gt;% 
+  rev() 
 
 gt(table,
-   rowname_col = &quot;athlete&quot;, groupname_col = &quot;category&quot;) %&gt;% 
+   rowname_col = &quot;athlete&quot;, groupname_col = &quot;category&quot;) %&gt;%  
+                            # for two levels of groups: groupname_col = c(&quot;group1&quot;, &quot;group2)
   cols_label(country_code = &quot;&quot;,
              nationality = &quot;Nationality&quot;, 
              n_wins = &quot;Count of wins&quot;, 
              # time = html(&quot;Best record &lt;br&gt;(h:m:s)&quot;), # to make (H:M:S on a second line)
              time = &quot;Best record (h:m:s)&quot;, 
-             year = &quot;Best year&quot;) %&gt;% 
+             year = &quot;Best year&quot;,
+             category_icon = &quot;&quot;) %&gt;% 
   tab_stub_indent(rows = everything(), indent = 2) %&gt;% 
   # tab_style(
   #   style = cell_borders(
@@ -422,24 +427,31 @@ gt(table,
   data_color(
     columns = n_wins,
     method = &quot;numeric&quot;,
-    palette = color,
+    palette = color[5:8],
     alpha = 0.7
   ) |&gt;
-  fmt_flag(columns = country_code)</code></pre>
-<div id="syabulegsk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#syabulegsk table {
+  fmt_flag(columns = country_code)  %&gt;%
+# Other formatting worth trying:
+  # svg library: https://www.svgrepo.com/
+  fmt_image(
+    columns = category_icon,
+    path = here::here(&quot;2023&quot;, &quot;2023-04-25&quot;, &quot;svg&quot;),
+    file_pattern = &quot;{x}.svg&quot;
+  )</code></pre>
+<div id="ohwilhuxie" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ohwilhuxie table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#syabulegsk thead, #syabulegsk tbody, #syabulegsk tfoot, #syabulegsk tr, #syabulegsk td, #syabulegsk th {
+#ohwilhuxie thead, #ohwilhuxie tbody, #ohwilhuxie tfoot, #ohwilhuxie tr, #ohwilhuxie td, #ohwilhuxie th {
 border-style: none;
 }
-#syabulegsk p {
+#ohwilhuxie p {
 margin: 0;
 padding: 0;
 }
-#syabulegsk .gt_table {
+#ohwilhuxie .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -464,11 +476,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#syabulegsk .gt_caption {
+#ohwilhuxie .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#syabulegsk .gt_title {
+#ohwilhuxie .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -479,7 +491,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#syabulegsk .gt_subtitle {
+#ohwilhuxie .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -490,7 +502,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#syabulegsk .gt_heading {
+#ohwilhuxie .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -501,12 +513,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#syabulegsk .gt_bottom_border {
+#ohwilhuxie .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #929292;
 }
-#syabulegsk .gt_col_headings {
+#ohwilhuxie .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #929292;
@@ -520,7 +532,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#syabulegsk .gt_col_heading {
+#ohwilhuxie .gt_col_heading {
 color: #FFFFFF;
 background-color: #004D80;
 font-size: 80%;
@@ -539,7 +551,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#syabulegsk .gt_column_spanner_outer {
+#ohwilhuxie .gt_column_spanner_outer {
 color: #FFFFFF;
 background-color: #004D80;
 font-size: 80%;
@@ -550,13 +562,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#syabulegsk .gt_column_spanner_outer:first-child {
+#ohwilhuxie .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#syabulegsk .gt_column_spanner_outer:last-child {
+#ohwilhuxie .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#syabulegsk .gt_column_spanner {
+#ohwilhuxie .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #929292;
@@ -567,10 +579,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#syabulegsk .gt_spanner_row {
+#ohwilhuxie .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#syabulegsk .gt_group_heading {
+#ohwilhuxie .gt_group_heading {
 padding-top: 4.8px;
 padding-bottom: 4.8px;
 padding-left: 5px;
@@ -595,7 +607,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#syabulegsk .gt_empty_group_heading {
+#ohwilhuxie .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -609,13 +621,13 @@ border-bottom-width: 2px;
 border-bottom-color: #929292;
 vertical-align: middle;
 }
-#syabulegsk .gt_from_md > :first-child {
+#ohwilhuxie .gt_from_md > :first-child {
 margin-top: 0;
 }
-#syabulegsk .gt_from_md > :last-child {
+#ohwilhuxie .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#syabulegsk .gt_row {
+#ohwilhuxie .gt_row {
 padding-top: 4.8px;
 padding-bottom: 4.8px;
 padding-left: 5px;
@@ -633,7 +645,7 @@ border-right-color: #929292;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#syabulegsk .gt_stub {
+#ohwilhuxie .gt_stub {
 color: #333333;
 background-color: #D5D5D5;
 font-size: 100%;
@@ -645,7 +657,7 @@ border-right-color: #FFFFFF;
 padding-left: 5px;
 padding-right: 5px;
 }
-#syabulegsk .gt_stub_row_group {
+#ohwilhuxie .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -658,13 +670,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#syabulegsk .gt_row_group_first td {
+#ohwilhuxie .gt_row_group_first td {
 border-top-width: 2px;
 }
-#syabulegsk .gt_row_group_first th {
+#ohwilhuxie .gt_row_group_first th {
 border-top-width: 2px;
 }
-#syabulegsk .gt_summary_row {
+#ohwilhuxie .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -673,14 +685,14 @@ padding-bottom: 4.8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#syabulegsk .gt_first_summary_row {
+#ohwilhuxie .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #929292;
 }
-#syabulegsk .gt_first_summary_row.thick {
+#ohwilhuxie .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#syabulegsk .gt_last_summary_row {
+#ohwilhuxie .gt_last_summary_row {
 padding-top: 4.8px;
 padding-bottom: 4.8px;
 padding-left: 5px;
@@ -689,7 +701,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #929292;
 }
-#syabulegsk .gt_grand_summary_row {
+#ohwilhuxie .gt_grand_summary_row {
 color: #333333;
 background-color: #D5D5D5;
 text-transform: inherit;
@@ -698,7 +710,7 @@ padding-bottom: 4.8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#syabulegsk .gt_first_grand_summary_row {
+#ohwilhuxie .gt_first_grand_summary_row {
 padding-top: 4.8px;
 padding-bottom: 4.8px;
 padding-left: 5px;
@@ -707,7 +719,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #929292;
 }
-#syabulegsk .gt_last_grand_summary_row_top {
+#ohwilhuxie .gt_last_grand_summary_row_top {
 padding-top: 4.8px;
 padding-bottom: 4.8px;
 padding-left: 5px;
@@ -716,10 +728,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #929292;
 }
-#syabulegsk .gt_striped {
+#ohwilhuxie .gt_striped {
 background-color: #F4F4F4;
 }
-#syabulegsk .gt_table_body {
+#ohwilhuxie .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #929292;
@@ -727,7 +739,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #929292;
 }
-#syabulegsk .gt_footnotes {
+#ohwilhuxie .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -740,7 +752,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#syabulegsk .gt_footnote {
+#ohwilhuxie .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 2.4px;
@@ -748,7 +760,7 @@ padding-bottom: 2.4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#syabulegsk .gt_sourcenotes {
+#ohwilhuxie .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -761,57 +773,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#syabulegsk .gt_sourcenote {
+#ohwilhuxie .gt_sourcenote {
 font-size: 90%;
 padding-top: 2.4px;
 padding-bottom: 2.4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#syabulegsk .gt_left {
+#ohwilhuxie .gt_left {
 text-align: left;
 }
-#syabulegsk .gt_center {
+#ohwilhuxie .gt_center {
 text-align: center;
 }
-#syabulegsk .gt_right {
+#ohwilhuxie .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#syabulegsk .gt_font_normal {
+#ohwilhuxie .gt_font_normal {
 font-weight: normal;
 }
-#syabulegsk .gt_font_bold {
+#ohwilhuxie .gt_font_bold {
 font-weight: bold;
 }
-#syabulegsk .gt_font_italic {
+#ohwilhuxie .gt_font_italic {
 font-style: italic;
 }
-#syabulegsk .gt_super {
+#ohwilhuxie .gt_super {
 font-size: 65%;
 }
-#syabulegsk .gt_footnote_marks {
+#ohwilhuxie .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#syabulegsk .gt_asterisk {
+#ohwilhuxie .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#syabulegsk .gt_indent_1 {
+#ohwilhuxie .gt_indent_1 {
 text-indent: 5px;
 }
-#syabulegsk .gt_indent_2 {
+#ohwilhuxie .gt_indent_2 {
 text-indent: 10px;
 }
-#syabulegsk .gt_indent_3 {
+#ohwilhuxie .gt_indent_3 {
 text-indent: 15px;
 }
-#syabulegsk .gt_indent_4 {
+#ohwilhuxie .gt_indent_4 {
 text-indent: 20px;
 }
-#syabulegsk .gt_indent_5 {
+#ohwilhuxie .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -825,93 +837,106 @@ text-indent: 25px;
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Count of wins">Count of wins</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Best record (h:m:s)">Best record (h:m:s)</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Best year">Best year</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id></th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
     <tr class="gt_group_heading_row">
-      <th colspan="6" class="gt_group_heading" scope="colgroup" id="Wheelchair Men">Wheelchair Men</th>
+      <th colspan="7" class="gt_group_heading" scope="colgroup" id="Wheelchair Men">Wheelchair Men</th>
     </tr>
     <tr class="gt_row_group_first"><td headers="Wheelchair Men stub_1_1 stub_1" class="gt_row gt_left gt_stub gt_indent_2">David Weir</td>
 <td headers="Wheelchair Men stub_1_1 country_code" class="gt_row gt_left"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>United Kingdom</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#eee" d="m0 0 8 22-8 23v23l32 54-32 54v32l32 48-32 48v32l32 54-32 54v68l22-8 23 8h23l54-32 54 32h32l48-32 48 32h32l54-32 54 32h68l-8-22 8-23v-23l-32-54 32-54v-32l-32-48 32-48v-32l-32-54 32-54V0l-22 8-23-8h-23l-54 32-54-32h-32l-48 32-48-32h-32l-54 32L68 0H0z"></path><path fill="#0052b4" d="M336 0v108L444 0Zm176 68L404 176h108zM0 176h108L0 68ZM68 0l108 108V0Zm108 512V404L68 512ZM0 444l108-108H0Zm512-108H404l108 108Zm-68 176L336 404v108z"></path><path fill="#d80027" d="M0 0v45l131 131h45L0 0zm208 0v208H0v96h208v208h96V304h208v-96H304V0h-96zm259 0L336 131v45L512 0h-45zM176 336 0 512h45l131-131v-45zm160 0 176 176v-45L381 336h-45z"></path></g></svg></span></td>
 <td headers="Wheelchair Men stub_1_1 nationality" class="gt_row gt_left">United Kingdom</td>
-<td headers="Wheelchair Men stub_1_1 n_wins" class="gt_row gt_center" style="background-color: rgba(146,53,30,0.7); color: #FFFFFF;">8</td>
+<td headers="Wheelchair Men stub_1_1 n_wins" class="gt_row gt_center" style="background-color: rgba(154,19,61,0.7); color: #FFFFFF;">8</td>
 <td headers="Wheelchair Men stub_1_1 time" class="gt_row gt_center">01:29:48</td>
-<td headers="Wheelchair Men stub_1_1 year" class="gt_row gt_center">2006</td></tr>
+<td headers="Wheelchair Men stub_1_1 year" class="gt_row gt_center">2006</td>
+<td headers="Wheelchair Men stub_1_1 category_icon" class="gt_row gt_left"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDM2IDM2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiBjbGFzcz0iaWNvbmlmeSBpY29uaWZ5LS10d2Vtb2ppIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij48cGF0aCBmaWxsPSIjMjY5IiBkPSJNMzYgMzJhNCA0IDAgMCAxLTQgNEg0YTQgNCAwIDAgMS00LTRWNGE0IDQgMCAwIDEgNC00aDI4YTQgNCAwIDAgMSA0IDR2Mjh6Ij48L3BhdGg+PGNpcmNsZSBmaWxsPSIjRkZGIiBjeD0iMjciIGN5PSI3IiByPSIzIj48L2NpcmNsZT48cGF0aCBmaWxsPSIjRkZGIiBkPSJNMTMuMDYgMTMuMDZsMi4zNjctMi4zNjZsMy44NTkgMS4xNThsLTIuNjM1IDIuODQ3YTEwLjAxOCAxMC4wMTggMCAwIDEgNC4zOTIgMy4zNzlsNS4wMTctNS4wMTdhMS41IDEuNSAwIDAgMC0uNjMtMi40OTdsLTkuOTk5LTNhMS40OTUgMS40OTUgMCAwIDAtMS40OTIuMzc2bC0zIDNhMS41IDEuNSAwIDEgMCAyLjEyMSAyLjEyem0xNi4wNjUgNC45NDlhMS40OTYgMS40OTYgMCAwIDAtMS4yNjItLjUwM2wtNi43ODYuNjE3YTkuOTY2IDkuOTY2IDAgMCAxIDEuNDY0IDIuODc5bDMuNTQ4LS4zMjJsLTEuNTU0IDYuOTk1YTEuNDk5IDEuNDk5IDAgMSAwIDIuOTI4LjY1bDItOWExLjUgMS41IDAgMCAwLS4zMzgtMS4zMTZ6TTEzIDE2YTggOCAwIDEgMCAwIDE2YTggOCAwIDAgMCAwLTE2em0wIDE0YTYgNiAwIDEgMSAuMDAyLTEyLjAwMkE2IDYgMCAwIDEgMTMgMzB6Ij48L3BhdGg+PC9zdmc+" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr><td headers="Wheelchair Men stub_1_2 stub_1" class="gt_row gt_left gt_stub gt_indent_2">David Holding</td>
 <td headers="Wheelchair Men stub_1_2 country_code" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>United Kingdom</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#eee" d="m0 0 8 22-8 23v23l32 54-32 54v32l32 48-32 48v32l32 54-32 54v68l22-8 23 8h23l54-32 54 32h32l48-32 48 32h32l54-32 54 32h68l-8-22 8-23v-23l-32-54 32-54v-32l-32-48 32-48v-32l-32-54 32-54V0l-22 8-23-8h-23l-54 32-54-32h-32l-48 32-48-32h-32l-54 32L68 0H0z"></path><path fill="#0052b4" d="M336 0v108L444 0Zm176 68L404 176h108zM0 176h108L0 68ZM68 0l108 108V0Zm108 512V404L68 512ZM0 444l108-108H0Zm512-108H404l108 108Zm-68 176L336 404v108z"></path><path fill="#d80027" d="M0 0v45l131 131h45L0 0zm208 0v208H0v96h208v208h96V304h208v-96H304V0h-96zm259 0L336 131v45L512 0h-45zM176 336 0 512h45l131-131v-45zm160 0 176 176v-45L381 336h-45z"></path></g></svg></span></td>
 <td headers="Wheelchair Men stub_1_2 nationality" class="gt_row gt_left gt_striped">United Kingdom</td>
-<td headers="Wheelchair Men stub_1_2 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(243,197,152,0.7); color: #000000;">4</td>
+<td headers="Wheelchair Men stub_1_2 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(247,185,203,0.7); color: #000000;">4</td>
 <td headers="Wheelchair Men stub_1_2 time" class="gt_row gt_center gt_striped">01:42:15</td>
-<td headers="Wheelchair Men stub_1_2 year" class="gt_row gt_center gt_striped">1997</td></tr>
+<td headers="Wheelchair Men stub_1_2 year" class="gt_row gt_center gt_striped">1997</td>
+<td headers="Wheelchair Men stub_1_2 category_icon" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDM2IDM2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiBjbGFzcz0iaWNvbmlmeSBpY29uaWZ5LS10d2Vtb2ppIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij48cGF0aCBmaWxsPSIjMjY5IiBkPSJNMzYgMzJhNCA0IDAgMCAxLTQgNEg0YTQgNCAwIDAgMS00LTRWNGE0IDQgMCAwIDEgNC00aDI4YTQgNCAwIDAgMSA0IDR2Mjh6Ij48L3BhdGg+PGNpcmNsZSBmaWxsPSIjRkZGIiBjeD0iMjciIGN5PSI3IiByPSIzIj48L2NpcmNsZT48cGF0aCBmaWxsPSIjRkZGIiBkPSJNMTMuMDYgMTMuMDZsMi4zNjctMi4zNjZsMy44NTkgMS4xNThsLTIuNjM1IDIuODQ3YTEwLjAxOCAxMC4wMTggMCAwIDEgNC4zOTIgMy4zNzlsNS4wMTctNS4wMTdhMS41IDEuNSAwIDAgMC0uNjMtMi40OTdsLTkuOTk5LTNhMS40OTUgMS40OTUgMCAwIDAtMS40OTIuMzc2bC0zIDNhMS41IDEuNSAwIDEgMCAyLjEyMSAyLjEyem0xNi4wNjUgNC45NDlhMS40OTYgMS40OTYgMCAwIDAtMS4yNjItLjUwM2wtNi43ODYuNjE3YTkuOTY2IDkuOTY2IDAgMCAxIDEuNDY0IDIuODc5bDMuNTQ4LS4zMjJsLTEuNTU0IDYuOTk1YTEuNDk5IDEuNDk5IDAgMSAwIDIuOTI4LjY1bDItOWExLjUgMS41IDAgMCAwLS4zMzgtMS4zMTZ6TTEzIDE2YTggOCAwIDEgMCAwIDE2YTggOCAwIDAgMCAwLTE2em0wIDE0YTYgNiAwIDEgMSAuMDAyLTEyLjAwMkE2IDYgMCAwIDEgMTMgMzB6Ij48L3BhdGg+PC9zdmc+" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr><td headers="Wheelchair Men stub_1_3 stub_1" class="gt_row gt_left gt_stub gt_indent_2">Heinz Frei</td>
 <td headers="Wheelchair Men stub_1_3 country_code" class="gt_row gt_left"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>Switzerland</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#d80027" d="M0 0h512v512H0z"></path><path fill="#eee" d="M389.6 211.5h-89v-89h-89.1v89h-89v89h89v89h89v-89h89z"></path></g></svg></span></td>
 <td headers="Wheelchair Men stub_1_3 nationality" class="gt_row gt_left">Switzerland</td>
-<td headers="Wheelchair Men stub_1_3 n_wins" class="gt_row gt_center" style="background-color: rgba(251,227,194,0.7); color: #000000;">3</td>
+<td headers="Wheelchair Men stub_1_3 n_wins" class="gt_row gt_center" style="background-color: rgba(249,228,235,0.7); color: #000000;">3</td>
 <td headers="Wheelchair Men stub_1_3 time" class="gt_row gt_center">01:35:18</td>
-<td headers="Wheelchair Men stub_1_3 year" class="gt_row gt_center">1998</td></tr>
+<td headers="Wheelchair Men stub_1_3 year" class="gt_row gt_center">1998</td>
+<td headers="Wheelchair Men stub_1_3 category_icon" class="gt_row gt_left"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDM2IDM2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiBjbGFzcz0iaWNvbmlmeSBpY29uaWZ5LS10d2Vtb2ppIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij48cGF0aCBmaWxsPSIjMjY5IiBkPSJNMzYgMzJhNCA0IDAgMCAxLTQgNEg0YTQgNCAwIDAgMS00LTRWNGE0IDQgMCAwIDEgNC00aDI4YTQgNCAwIDAgMSA0IDR2Mjh6Ij48L3BhdGg+PGNpcmNsZSBmaWxsPSIjRkZGIiBjeD0iMjciIGN5PSI3IiByPSIzIj48L2NpcmNsZT48cGF0aCBmaWxsPSIjRkZGIiBkPSJNMTMuMDYgMTMuMDZsMi4zNjctMi4zNjZsMy44NTkgMS4xNThsLTIuNjM1IDIuODQ3YTEwLjAxOCAxMC4wMTggMCAwIDEgNC4zOTIgMy4zNzlsNS4wMTctNS4wMTdhMS41IDEuNSAwIDAgMC0uNjMtMi40OTdsLTkuOTk5LTNhMS40OTUgMS40OTUgMCAwIDAtMS40OTIuMzc2bC0zIDNhMS41IDEuNSAwIDEgMCAyLjEyMSAyLjEyem0xNi4wNjUgNC45NDlhMS40OTYgMS40OTYgMCAwIDAtMS4yNjItLjUwM2wtNi43ODYuNjE3YTkuOTY2IDkuOTY2IDAgMCAxIDEuNDY0IDIuODc5bDMuNTQ4LS4zMjJsLTEuNTU0IDYuOTk1YTEuNDk5IDEuNDk5IDAgMSAwIDIuOTI4LjY1bDItOWExLjUgMS41IDAgMCAwLS4zMzgtMS4zMTZ6TTEzIDE2YTggOCAwIDEgMCAwIDE2YTggOCAwIDAgMCAwLTE2em0wIDE0YTYgNiAwIDEgMSAuMDAyLTEyLjAwMkE2IDYgMCAwIDEgMTMgMzB6Ij48L3BhdGg+PC9zdmc+" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr class="gt_group_heading_row">
-      <th colspan="6" class="gt_group_heading" scope="colgroup" id="Wheelchair Women">Wheelchair Women</th>
+      <th colspan="7" class="gt_group_heading" scope="colgroup" id="Wheelchair Women">Wheelchair Women</th>
     </tr>
     <tr class="gt_row_group_first"><td headers="Wheelchair Women stub_1_4 stub_1" class="gt_row gt_left gt_stub gt_indent_2">Tanni Grey-Thompson</td>
 <td headers="Wheelchair Women stub_1_4 country_code" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>United Kingdom</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#eee" d="m0 0 8 22-8 23v23l32 54-32 54v32l32 48-32 48v32l32 54-32 54v68l22-8 23 8h23l54-32 54 32h32l48-32 48 32h32l54-32 54 32h68l-8-22 8-23v-23l-32-54 32-54v-32l-32-48 32-48v-32l-32-54 32-54V0l-22 8-23-8h-23l-54 32-54-32h-32l-48 32-48-32h-32l-54 32L68 0H0z"></path><path fill="#0052b4" d="M336 0v108L444 0Zm176 68L404 176h108zM0 176h108L0 68ZM68 0l108 108V0Zm108 512V404L68 512ZM0 444l108-108H0Zm512-108H404l108 108Zm-68 176L336 404v108z"></path><path fill="#d80027" d="M0 0v45l131 131h45L0 0zm208 0v208H0v96h208v208h96V304h208v-96H304V0h-96zm259 0L336 131v45L512 0h-45zM176 336 0 512h45l131-131v-45zm160 0 176 176v-45L381 336h-45z"></path></g></svg></span></td>
 <td headers="Wheelchair Women stub_1_4 nationality" class="gt_row gt_left gt_striped">United Kingdom</td>
-<td headers="Wheelchair Women stub_1_4 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(216,131,89,0.7); color: #FFFFFF;">6</td>
+<td headers="Wheelchair Women stub_1_4 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(215,92,129,0.7); color: #FFFFFF;">6</td>
 <td headers="Wheelchair Women stub_1_4 time" class="gt_row gt_center gt_striped">02:00:10</td>
-<td headers="Wheelchair Women stub_1_4 year" class="gt_row gt_center gt_striped">1996</td></tr>
+<td headers="Wheelchair Women stub_1_4 year" class="gt_row gt_center gt_striped">1996</td>
+<td headers="Wheelchair Women stub_1_4 category_icon" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAzNiAzNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgYXJpYS1oaWRkZW49InRydWUiIHJvbGU9ImltZyIgY2xhc3M9Imljb25pZnkgaWNvbmlmeS0tdHdlbW9qaSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCIgZmlsbD0iIzAwMDAwMCI+Cg08ZyBpZD0iU1ZHUmVwb19iZ0NhcnJpZXIiIHN0cm9rZS13aWR0aD0iMCIvPgoNPGcgaWQ9IlNWR1JlcG9fdHJhY2VyQ2FycmllciIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cg08ZyBpZD0iU1ZHUmVwb19pY29uQ2FycmllciI+Cg08cGF0aCBmaWxsPSIjY2I1Nzk1IiBkPSJNMzYgMzJhNCA0IDAgMCAxLTQgNEg0YTQgNCAwIDAgMS00LTRWNGE0IDQgMCAwIDEgNC00aDI4YTQgNCAwIDAgMSA0IDR2Mjh6Ii8+Cg08Y2lyY2xlIGZpbGw9IiNmZmZmZmYiIGN4PSIyNyIgY3k9IjciIHI9IjMiLz4KDTxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xMy4wNiAxMy4wNmwyLjM2Ny0yLjM2NmwzLjg1OSAxLjE1OGwtMi42MzUgMi44NDdhMTAuMDE4IDEwLjAxOCAwIDAgMSA0LjM5MiAzLjM3OWw1LjAxNy01LjAxN2ExLjUgMS41IDAgMCAwLS42My0yLjQ5N2wtOS45OTktM2ExLjQ5NSAxLjQ5NSAwIDAgMC0xLjQ5Mi4zNzZsLTMgM2ExLjUgMS41IDAgMSAwIDIuMTIxIDIuMTJ6bTE2LjA2NSA0Ljk0OWExLjQ5NiAxLjQ5NiAwIDAgMC0xLjI2Mi0uNTAzbC02Ljc4Ni42MTdhOS45NjYgOS45NjYgMCAwIDEgMS40NjQgMi44NzlsMy41NDgtLjMyMmwtMS41NTQgNi45OTVhMS40OTkgMS40OTkgMCAxIDAgMi45MjguNjVsMi05YTEuNSAxLjUgMCAwIDAtLjMzOC0xLjMxNnpNMTMgMTZhOCA4IDAgMSAwIDAgMTZhOCA4IDAgMCAwIDAtMTZ6bTAgMTRhNiA2IDAgMSAxIC4wMDItMTIuMDAyQTYgNiAwIDAgMSAxMyAzMHoiLz4KDTwvZz4KDTwvc3ZnPg==" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr><td headers="Wheelchair Women stub_1_5 stub_1" class="gt_row gt_left gt_stub gt_indent_2">Francesca Porcellato</td>
 <td headers="Wheelchair Women stub_1_5 country_code" class="gt_row gt_left"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>Italy</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#eee" d="M167 0h178l25.9 252.3L345 512H167l-29.8-253.4z"></path><path fill="#6da544" d="M0 0h167v512H0z"></path><path fill="#d80027" d="M345 0h167v512H345z"></path></g></svg></span></td>
 <td headers="Wheelchair Women stub_1_5 nationality" class="gt_row gt_left">Italy</td>
-<td headers="Wheelchair Women stub_1_5 n_wins" class="gt_row gt_center" style="background-color: rgba(243,197,152,0.7); color: #000000;">4</td>
+<td headers="Wheelchair Women stub_1_5 n_wins" class="gt_row gt_center" style="background-color: rgba(247,185,203,0.7); color: #000000;">4</td>
 <td headers="Wheelchair Women stub_1_5 time" class="gt_row gt_center">01:57:00</td>
-<td headers="Wheelchair Women stub_1_5 year" class="gt_row gt_center">2005</td></tr>
+<td headers="Wheelchair Women stub_1_5 year" class="gt_row gt_center">2005</td>
+<td headers="Wheelchair Women stub_1_5 category_icon" class="gt_row gt_left"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAzNiAzNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgYXJpYS1oaWRkZW49InRydWUiIHJvbGU9ImltZyIgY2xhc3M9Imljb25pZnkgaWNvbmlmeS0tdHdlbW9qaSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCIgZmlsbD0iIzAwMDAwMCI+Cg08ZyBpZD0iU1ZHUmVwb19iZ0NhcnJpZXIiIHN0cm9rZS13aWR0aD0iMCIvPgoNPGcgaWQ9IlNWR1JlcG9fdHJhY2VyQ2FycmllciIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cg08ZyBpZD0iU1ZHUmVwb19pY29uQ2FycmllciI+Cg08cGF0aCBmaWxsPSIjY2I1Nzk1IiBkPSJNMzYgMzJhNCA0IDAgMCAxLTQgNEg0YTQgNCAwIDAgMS00LTRWNGE0IDQgMCAwIDEgNC00aDI4YTQgNCAwIDAgMSA0IDR2Mjh6Ii8+Cg08Y2lyY2xlIGZpbGw9IiNmZmZmZmYiIGN4PSIyNyIgY3k9IjciIHI9IjMiLz4KDTxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xMy4wNiAxMy4wNmwyLjM2Ny0yLjM2NmwzLjg1OSAxLjE1OGwtMi42MzUgMi44NDdhMTAuMDE4IDEwLjAxOCAwIDAgMSA0LjM5MiAzLjM3OWw1LjAxNy01LjAxN2ExLjUgMS41IDAgMCAwLS42My0yLjQ5N2wtOS45OTktM2ExLjQ5NSAxLjQ5NSAwIDAgMC0xLjQ5Mi4zNzZsLTMgM2ExLjUgMS41IDAgMSAwIDIuMTIxIDIuMTJ6bTE2LjA2NSA0Ljk0OWExLjQ5NiAxLjQ5NiAwIDAgMC0xLjI2Mi0uNTAzbC02Ljc4Ni42MTdhOS45NjYgOS45NjYgMCAwIDEgMS40NjQgMi44NzlsMy41NDgtLjMyMmwtMS41NTQgNi45OTVhMS40OTkgMS40OTkgMCAxIDAgMi45MjguNjVsMi05YTEuNSAxLjUgMCAwIDAtLjMzOC0xLjMxNnpNMTMgMTZhOCA4IDAgMSAwIDAgMTZhOCA4IDAgMCAwIDAtMTZ6bTAgMTRhNiA2IDAgMSAxIC4wMDItMTIuMDAyQTYgNiAwIDAgMSAxMyAzMHoiLz4KDTwvZz4KDTwvc3ZnPg==" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr><td headers="Wheelchair Women stub_1_6 stub_1" class="gt_row gt_left gt_stub gt_indent_2">Tatyana McFadden</td>
 <td headers="Wheelchair Women stub_1_6 country_code" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>United States</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#eee" d="M256 0h256v64l-32 32 32 32v64l-32 32 32 32v64l-32 32 32 32v64l-256 32L0 448v-64l32-32-32-32v-64z"></path><path fill="#d80027" d="M224 64h288v64H224Zm0 128h288v64H256ZM0 320h512v64H0Zm0 128h512v64H0Z"></path><path fill="#0052b4" d="M0 0h256v256H0Z"></path><path fill="#eee" d="m187 243 57-41h-70l57 41-22-67zm-81 0 57-41H93l57 41-22-67zm-81 0 57-41H12l57 41-22-67zm162-81 57-41h-70l57 41-22-67zm-81 0 57-41H93l57 41-22-67zm-81 0 57-41H12l57 41-22-67Zm162-82 57-41h-70l57 41-22-67Zm-81 0 57-41H93l57 41-22-67zm-81 0 57-41H12l57 41-22-67Z"></path></g></svg></span></td>
 <td headers="Wheelchair Women stub_1_6 nationality" class="gt_row gt_left gt_striped">United States</td>
-<td headers="Wheelchair Women stub_1_6 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(243,197,152,0.7); color: #000000;">4</td>
+<td headers="Wheelchair Women stub_1_6 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(247,185,203,0.7); color: #000000;">4</td>
 <td headers="Wheelchair Women stub_1_6 time" class="gt_row gt_center gt_striped">01:41:14</td>
-<td headers="Wheelchair Women stub_1_6 year" class="gt_row gt_center gt_striped">2015</td></tr>
+<td headers="Wheelchair Women stub_1_6 year" class="gt_row gt_center gt_striped">2015</td>
+<td headers="Wheelchair Women stub_1_6 category_icon" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAzNiAzNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgYXJpYS1oaWRkZW49InRydWUiIHJvbGU9ImltZyIgY2xhc3M9Imljb25pZnkgaWNvbmlmeS0tdHdlbW9qaSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCIgZmlsbD0iIzAwMDAwMCI+Cg08ZyBpZD0iU1ZHUmVwb19iZ0NhcnJpZXIiIHN0cm9rZS13aWR0aD0iMCIvPgoNPGcgaWQ9IlNWR1JlcG9fdHJhY2VyQ2FycmllciIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cg08ZyBpZD0iU1ZHUmVwb19pY29uQ2FycmllciI+Cg08cGF0aCBmaWxsPSIjY2I1Nzk1IiBkPSJNMzYgMzJhNCA0IDAgMCAxLTQgNEg0YTQgNCAwIDAgMS00LTRWNGE0IDQgMCAwIDEgNC00aDI4YTQgNCAwIDAgMSA0IDR2Mjh6Ii8+Cg08Y2lyY2xlIGZpbGw9IiNmZmZmZmYiIGN4PSIyNyIgY3k9IjciIHI9IjMiLz4KDTxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xMy4wNiAxMy4wNmwyLjM2Ny0yLjM2NmwzLjg1OSAxLjE1OGwtMi42MzUgMi44NDdhMTAuMDE4IDEwLjAxOCAwIDAgMSA0LjM5MiAzLjM3OWw1LjAxNy01LjAxN2ExLjUgMS41IDAgMCAwLS42My0yLjQ5N2wtOS45OTktM2ExLjQ5NSAxLjQ5NSAwIDAgMC0xLjQ5Mi4zNzZsLTMgM2ExLjUgMS41IDAgMSAwIDIuMTIxIDIuMTJ6bTE2LjA2NSA0Ljk0OWExLjQ5NiAxLjQ5NiAwIDAgMC0xLjI2Mi0uNTAzbC02Ljc4Ni42MTdhOS45NjYgOS45NjYgMCAwIDEgMS40NjQgMi44NzlsMy41NDgtLjMyMmwtMS41NTQgNi45OTVhMS40OTkgMS40OTkgMCAxIDAgMi45MjguNjVsMi05YTEuNSAxLjUgMCAwIDAtLjMzOC0xLjMxNnpNMTMgMTZhOCA4IDAgMSAwIDAgMTZhOCA4IDAgMCAwIDAtMTZ6bTAgMTRhNiA2IDAgMSAxIC4wMDItMTIuMDAyQTYgNiAwIDAgMSAxMyAzMHoiLz4KDTwvZz4KDTwvc3ZnPg==" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr class="gt_group_heading_row">
-      <th colspan="6" class="gt_group_heading" scope="colgroup" id="Men">Men</th>
+      <th colspan="7" class="gt_group_heading" scope="colgroup" id="Men">Men</th>
     </tr>
     <tr class="gt_row_group_first"><td headers="Men stub_1_7 stub_1" class="gt_row gt_left gt_stub gt_indent_2">Eliud Kipchoge</td>
 <td headers="Men stub_1_7 country_code" class="gt_row gt_left"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>Kenya</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#eee" d="m0 144.7 253.4-28.2L512 144.7V178l-36 76.4 36 79.6v33.3L254.7 400 0 367.3V334l39-78-39-78z"></path><path fill="#333" d="M0 0h512v144.7H0z"></path><path fill="#a2001d" d="M0 178h512v156H0z"></path><path fill="#496e2d" d="M0 367.3h512V512H0z"></path><path fill="#eee" d="m335.9 118.3-30.3-14-49.4 111.9-49.4-111.9-30.3 14L237.8 256l-61.3 137.7 30.3 14 49.4-111.9 49.4 111.9 30.3-14L274.6 256z"></path><path fill="#eee" d="M256.2 111.3s-7 5.8-16.7 16l-16 127.6 16 129.8c9.7 10.2 16.7 16 16.7 16s7-5.8 16.7-16l15-130.7-15-126.7c-9.7-10.2-16.7-16-16.7-16z"></path><path fill="#333" d="m311.9 179.2-10 75.5 10 78.1A158.6 158.6 0 0 0 334 256c0-28.2-9.7-54.5-22.2-76.8zm-111.4 0 8.9 74.3-9 79.3a158.6 158.6 0 0 1-22.1-76.8c0-28.2 9.7-54.5 22.2-76.8z"></path><path fill="#a2001d" d="M200.5 179.2v153.6a269 269 0 0 0 39 51.9V127.3c-11.4 12-26.6 30-39 52zm111.4 0a269 269 0 0 0-39-51.9v257.4c11.4-12 26.5-30 39-52V179.3z"></path></g></svg></span></td>
 <td headers="Men stub_1_7 nationality" class="gt_row gt_left">Kenya</td>
-<td headers="Men stub_1_7 n_wins" class="gt_row gt_center" style="background-color: rgba(243,197,152,0.7); color: #000000;">4</td>
+<td headers="Men stub_1_7 n_wins" class="gt_row gt_center" style="background-color: rgba(247,185,203,0.7); color: #000000;">4</td>
 <td headers="Men stub_1_7 time" class="gt_row gt_center">02:02:37</td>
-<td headers="Men stub_1_7 year" class="gt_row gt_center">2019</td></tr>
+<td headers="Men stub_1_7 year" class="gt_row gt_center">2019</td>
+<td headers="Men stub_1_7 category_icon" class="gt_row gt_left"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBmaWxsPSIjMDAwMDAwIj4KDTxnIGlkPSJTVkdSZXBvX2JnQ2FycmllciIgc3Ryb2tlLXdpZHRoPSIwIi8+Cg08ZyBpZD0iU1ZHUmVwb190cmFjZXJDYXJyaWVyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KDTxnIGlkPSJTVkdSZXBvX2ljb25DYXJyaWVyIj4gPHRpdGxlPnJ1bl9maWxsPC90aXRsZT4gPGcgaWQ9Iumhtemdoi0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gPGcgaWQ9IlRyYW5zcG9ydCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTgxNi4wMDAwMDAsIC00OC4wMDAwMDApIiBmaWxsLXJ1bGU9Im5vbnplcm8iPiA8ZyBpZD0icnVuX2ZpbGwiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDgxNi4wMDAwMDAsIDQ4LjAwMDAwMCkiPiA8cGF0aCBkPSJNMjQsMCBMMjQsMjQgTDAsMjQgTDAsMCBMMjQsMCBaIE0xMi41OTM0OTAxLDIzLjI1Nzg0MSBMMTIuNTgxOTQwMiwyMy4yNTk1MTMxIEwxMi41MTA4Nzc3LDIzLjI5NTA0MzkgTDEyLjQ5MTg3OTEsMjMuMjk4NzQ2OSBMMTIuNDkxODc5MSwyMy4yOTg3NDY5IEwxMi40NzY3MTUyLDIzLjI5NTA0MzkgTDEyLjQwNTY1NDgsMjMuMjU5NTEzMSBDMTIuMzk1ODIyOSwyMy4yNTYzNjYyIDEyLjM4NzA0OTMsMjMuMjU5MDIzNSAxMi4zODIxNDIxLDIzLjI2NDkwNzQgTDEyLjM3ODAzMjMsMjMuMjc1ODMxIEwxMi4zNjA5NDEsMjMuNzAzMTA5NyBMMTIuMzY1ODk0NywyMy43MjM0OTk0IEwxMi4zNzY5MDQ4LDIzLjczNTcxMzkgTDEyLjQ4MDQ3NzcsMjMuODA5NjkzMSBMMTIuNDk1MzQ5MSwyMy44MTM2MTM0IEwxMi40OTUzNDkxLDIzLjgxMzYxMzQgTDEyLjUwNzExNTIsMjMuODA5NjkzMSBMMTIuNjEwNjkwMiwyMy43MzU3MTM5IEwxMi42MjMyOTM4LDIzLjcxOTY3MzMgTDEyLjYyMzI5MzgsMjMuNzE5NjczMyBMMTIuNjI2NjUyNywyMy43MDMxMDk3IEwxMi42MDk1NjEsMjMuMjc1ODMxIEMxMi42MDc1NzI0LDIzLjI2NTcwMTMgMTIuNjAxMDExMiwyMy4yNTkyOTkzIDEyLjU5MzQ5MDEsMjMuMjU3ODQxIEwxMi41OTM0OTAxLDIzLjI1Nzg0MSBaIE0xMi44NTgzOTA2LDIzLjE0NTI4NjIgTDEyLjg0NDU0ODUsMjMuMTQ3MzA3MiBMMTIuNjU5ODQ0MywyMy4yMzk2NTk3IEwxMi42NDk4ODIyLDIzLjI0OTkwNTIgTDEyLjY0OTg4MjIsMjMuMjQ5OTA1MiBMMTIuNjQ3MTk0MywyMy4yNjExMTE0IEwxMi42NjUwOTQzLDIzLjY5MDYzODkgTDEyLjY2OTkzNDksMjMuNzAzNDE3OCBMMTIuNjY5OTM0OSwyMy43MDM0MTc4IEwxMi42NzgzODYsMjMuNzEwNDkzMSBMMTIuODc5MzQwMiwyMy44MDMyMzg5IEMxMi44OTE0Mjg1LDIzLjgwNjg5OTkgMTIuOTAyMjMzMywyMy44MDI5ODc1IDEyLjkwNzgyODYsMjMuNzk1MjI2NCBMMTIuOTExODIzNSwyMy43ODExNjM5IEwxMi44Nzc2Nzc3LDIzLjE2NjUzMzEgQzEyLjg3NTI4ODIsMjMuMTU0NTg5NyAxMi44Njc0MTAyLDIzLjE0NzAwMTYgMTIuODU4MzkwNiwyMy4xNDUyODYyIEwxMi44NTgzOTA2LDIzLjE0NTI4NjIgWiBNMTIuMTQzMDQ3MywyMy4xNDczMDcyIEMxMi4xMzMyMTc4LDIzLjE0MjM5MjUgMTIuMTIyMTc2MywyMy4xNDUyNjA2IDEyLjExNTYzNjUsMjMuMTUyNTk1NCBMMTIuMTA5OTE3MywyMy4xNjY1MzMxIEwxMi4wNzU3NzE0LDIzLjc4MTE2MzkgQzEyLjA3NTEzMjMsMjMuNzkyNjYzOSAxMi4wODI4MDk5LDIzLjgwMTg2MDIgMTIuMDkyNjQ4MSwyMy44MDQ1Njc2IEwxMi4xMDgyNTYsMjMuODAzMjM4OSBMMTIuMzA5MjEwNiwyMy43MTA0OTMxIEwxMi4zMTg2NDk3LDIzLjcwMjQzNDcgTDEyLjMxODY0OTcsMjMuNzAyNDM0NyBMMTIuMzIyNTA0MywyMy42OTA2Mzg5IEwxMi4zNDA0MDEsMjMuMjYxMTExNCBMMTIuMzM3MjQ1LDIzLjI0ODUxNzYgTDEyLjMzNzI0NSwyMy4yNDg1MTc2IEwxMi4zMjc3NTMxLDIzLjIzOTY1OTcgTDEyLjE0MzA0NzMsMjMuMTQ3MzA3MiBaIiBpZD0iTWluZ0N1dGUiIGZpbGwtcnVsZT0ibm9uemVybyI+IDwvcGF0aD4gPHBhdGggZD0iTTEzLDIgQzE0LjY1NjksMiAxNiwzLjM0MzE1IDE2LDUgQzE2LDYuNDM3NDI3MiAxNC45ODkwOTcsNy42Mzg3MzEyNiAxMy42Mzk0MjQ4LDcuOTMxNzE2MzIgTDEzLjQ2OSw3Ljk2MzU2IEwxNC45MDQ5LDEwLjI2MSBMMTYuNjI4Niw5LjU3MTU0IEMxNy4xNDE0LDkuMzY2NDMgMTcuNzIzNCw5LjYxNTg0IDE3LjkyODUsMTAuMTI4NiBDMTguMTE4OTUsMTAuNjA0NzcxNCAxNy45MTc1MDk3LDExLjE0MDYxMDIgMTcuNDc3MTg0NCwxMS4zNzg5NDM3IEwxNy4zNzE0LDExLjQyODUgTDE1LjY0NzcsMTIuMTE4IEMxNC44MDE4NjQ3LDEyLjQ1NjM1MjkgMTMuODQyMjkxLDEyLjE3ODg4ODYgMTMuMzA0NjM1MywxMS40NjA3Njg3IEwxMy4yMDg5LDExLjMyMSBMMTMuMDQ2MywxMS4wNjA5IEwxMi40NDAzLDEzLjQ4NTEgQzEyLjM4NjA2LDEzLjcwMTkgMTIuMjk4MzQ4LDEzLjkwMTU0OCAxMi4xODQwNzYsMTQuMDc5ODQ1NiBMMTIuMDkzNSwxNC4yMDk1IEwxMy43NDY4LDE1LjQzNzcgQzE0LjE0MzA2NjcsMTUuNzMyMDExMSAxNC40MTQ2NTE5LDE2LjE2MTAzODMgMTQuNTEzMjM1MSwxNi42NDAzNjEyIEwxNC41NDIsMTYuODIyMyBMMTQuODk1LDIwIEwxNSwyMCBDMTUuNTUyMywyMCAxNiwyMC40NDc3IDE2LDIxIEMxNiwyMS41MTI4NSAxNS42MTM5NzMsMjEuOTM1NTA5MiAxNS4xMTY2MjM5LDIxLjk5MzI3MjUgTDE1LDIyIEwxNC4wODk1LDIyIEMxMy41NjkwMzU3LDIyIDEzLjEyNTgyODYsMjEuNjM2NjUgMTMuMDE1NjA4MSwyMS4xMzg2OTc0IEwxMi45OTYyLDIxLjAyMTUgTDEyLjU1NDIsMTcuMDQzMSBMOS40MDM2OCwxNC43MDI4IEM5LjM0NjcxLDE0LjY2MDUgOS4yOTU1MywxNC42MTMyIDkuMjUwMywxNC41NjIxIEM4LjY5ODUxMzMzLDE0LjEyMDE2NjcgOC40MDQ2MzY1MywxMy40MDE5MTY5IDguNTI3MDU3MzUsMTIuNjcxNTA2NCBMOC41NTk3MiwxMi41MTQ5IEw5LjM1Mzk5LDkuMzM3ODUgTDcuNzg0NTQsOS44MDg2OSBMNi45NDg2OCwxMi4zMTYyIEM2Ljc3NDA0LDEyLjg0MDIgNi4yMDc3MiwxMy4xMjM0IDUuNjgzNzcsMTIuOTQ4NyBDNS4xOTcyNTQyOSwxMi43ODY1NzE0IDQuOTE4MzQ5OSwxMi4yODY2MTUzIDUuMDIwODIzMiwxMS43OTY1NTY1IEw1LjA1MTMyLDExLjY4MzggTDUuODg3MTcsOS4xNzYyMyBDNi4wNzU4MzgzMyw4LjYxMDIxNTgzIDYuNTA2MTc4OTYsOC4xNjA4MDcwMSA3LjA1Njc4NDM0LDcuOTQ1NzgzMTggTDcuMjA5ODQsNy44OTMwNCBMMTAuNjQ3NCw2Ljg2MTc2IEMxMC4yNDIxLDYuMzUwMjIgMTAsNS43MDMzOCAxMCw1IEMxMCwzLjM0MzE1IDExLjM0MzEsMiAxMywyIFogTTkuNiwxNS4yIEMxMC4wNDE4LDE1LjUzMTQgMTAuMTMxNCwxNi4xNTgyIDkuOCwxNi42IEw4LjU4MzgsMTguMjIxNiBDOC4xMDYxNCwxOC44NTg1IDcuMjE0MTQsMTkuMDExMyA2LjU1MTc1LDE4LjU2OTcgTDQuNjIxOTcsMTcuMjgzMiBDNC4yMjkzOSwxNy41OTU3IDMuNjU2MTYsMTcuNTcwNCAzLjI5Mjg5LDE3LjIwNzEgQzIuOTAyMzcsMTYuODE2NiAyLjkwMjM3LDE2LjE4MzQgMy4yOTI4OSwxNS43OTI5IEwzLjc4NzEsMTUuMjk4NyBDNC4xMjc1MywxNC45NTgzIDQuNjYwOTQsMTQuOTA1NSA1LjA2MTUyLDE1LjE3MjUgTDcuMjY3NTksMTYuNjQzMiBMOC4yLDE1LjQgQzguNTMxMzcsMTQuOTU4MiA5LjE1ODE3LDE0Ljg2ODYgOS42LDE1LjIgWiIgaWQ9IuW9oueKtiIgZmlsbD0iIzI4NmI5ZiI+IDwvcGF0aD4gPC9nPiA8L2c+IDwvZz4gPC9nPgoNPC9zdmc+" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr><td headers="Men stub_1_8 stub_1" class="gt_row gt_left gt_stub gt_indent_2">António Pinto</td>
 <td headers="Men stub_1_8 country_code" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>Portugal</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#6da544" d="M0 512h167l37.9-260.3L167 0H0z"></path><path fill="#d80027" d="M512 0H167v512h345z"></path><circle cx="167" cy="256" r="89" fill="#ffda44"></circle><path fill="#d80027" d="M116.9 211.5V267a50 50 0 1 0 100.1 0v-55.6H117z"></path><path fill="#eee" d="M167 283.8c-9.2 0-16.7-7.5-16.7-16.7V245h33.4v22c0 9.2-7.5 16.7-16.7 16.7z"></path></g></svg></span></td>
 <td headers="Men stub_1_8 nationality" class="gt_row gt_left gt_striped">Portugal</td>
-<td headers="Men stub_1_8 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(251,227,194,0.7); color: #000000;">3</td>
+<td headers="Men stub_1_8 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(249,228,235,0.7); color: #000000;">3</td>
 <td headers="Men stub_1_8 time" class="gt_row gt_center gt_striped">02:06:36</td>
-<td headers="Men stub_1_8 year" class="gt_row gt_center gt_striped">2000</td></tr>
+<td headers="Men stub_1_8 year" class="gt_row gt_center gt_striped">2000</td>
+<td headers="Men stub_1_8 category_icon" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBmaWxsPSIjMDAwMDAwIj4KDTxnIGlkPSJTVkdSZXBvX2JnQ2FycmllciIgc3Ryb2tlLXdpZHRoPSIwIi8+Cg08ZyBpZD0iU1ZHUmVwb190cmFjZXJDYXJyaWVyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KDTxnIGlkPSJTVkdSZXBvX2ljb25DYXJyaWVyIj4gPHRpdGxlPnJ1bl9maWxsPC90aXRsZT4gPGcgaWQ9Iumhtemdoi0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gPGcgaWQ9IlRyYW5zcG9ydCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTgxNi4wMDAwMDAsIC00OC4wMDAwMDApIiBmaWxsLXJ1bGU9Im5vbnplcm8iPiA8ZyBpZD0icnVuX2ZpbGwiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDgxNi4wMDAwMDAsIDQ4LjAwMDAwMCkiPiA8cGF0aCBkPSJNMjQsMCBMMjQsMjQgTDAsMjQgTDAsMCBMMjQsMCBaIE0xMi41OTM0OTAxLDIzLjI1Nzg0MSBMMTIuNTgxOTQwMiwyMy4yNTk1MTMxIEwxMi41MTA4Nzc3LDIzLjI5NTA0MzkgTDEyLjQ5MTg3OTEsMjMuMjk4NzQ2OSBMMTIuNDkxODc5MSwyMy4yOTg3NDY5IEwxMi40NzY3MTUyLDIzLjI5NTA0MzkgTDEyLjQwNTY1NDgsMjMuMjU5NTEzMSBDMTIuMzk1ODIyOSwyMy4yNTYzNjYyIDEyLjM4NzA0OTMsMjMuMjU5MDIzNSAxMi4zODIxNDIxLDIzLjI2NDkwNzQgTDEyLjM3ODAzMjMsMjMuMjc1ODMxIEwxMi4zNjA5NDEsMjMuNzAzMTA5NyBMMTIuMzY1ODk0NywyMy43MjM0OTk0IEwxMi4zNzY5MDQ4LDIzLjczNTcxMzkgTDEyLjQ4MDQ3NzcsMjMuODA5NjkzMSBMMTIuNDk1MzQ5MSwyMy44MTM2MTM0IEwxMi40OTUzNDkxLDIzLjgxMzYxMzQgTDEyLjUwNzExNTIsMjMuODA5NjkzMSBMMTIuNjEwNjkwMiwyMy43MzU3MTM5IEwxMi42MjMyOTM4LDIzLjcxOTY3MzMgTDEyLjYyMzI5MzgsMjMuNzE5NjczMyBMMTIuNjI2NjUyNywyMy43MDMxMDk3IEwxMi42MDk1NjEsMjMuMjc1ODMxIEMxMi42MDc1NzI0LDIzLjI2NTcwMTMgMTIuNjAxMDExMiwyMy4yNTkyOTkzIDEyLjU5MzQ5MDEsMjMuMjU3ODQxIEwxMi41OTM0OTAxLDIzLjI1Nzg0MSBaIE0xMi44NTgzOTA2LDIzLjE0NTI4NjIgTDEyLjg0NDU0ODUsMjMuMTQ3MzA3MiBMMTIuNjU5ODQ0MywyMy4yMzk2NTk3IEwxMi42NDk4ODIyLDIzLjI0OTkwNTIgTDEyLjY0OTg4MjIsMjMuMjQ5OTA1MiBMMTIuNjQ3MTk0MywyMy4yNjExMTE0IEwxMi42NjUwOTQzLDIzLjY5MDYzODkgTDEyLjY2OTkzNDksMjMuNzAzNDE3OCBMMTIuNjY5OTM0OSwyMy43MDM0MTc4IEwxMi42NzgzODYsMjMuNzEwNDkzMSBMMTIuODc5MzQwMiwyMy44MDMyMzg5IEMxMi44OTE0Mjg1LDIzLjgwNjg5OTkgMTIuOTAyMjMzMywyMy44MDI5ODc1IDEyLjkwNzgyODYsMjMuNzk1MjI2NCBMMTIuOTExODIzNSwyMy43ODExNjM5IEwxMi44Nzc2Nzc3LDIzLjE2NjUzMzEgQzEyLjg3NTI4ODIsMjMuMTU0NTg5NyAxMi44Njc0MTAyLDIzLjE0NzAwMTYgMTIuODU4MzkwNiwyMy4xNDUyODYyIEwxMi44NTgzOTA2LDIzLjE0NTI4NjIgWiBNMTIuMTQzMDQ3MywyMy4xNDczMDcyIEMxMi4xMzMyMTc4LDIzLjE0MjM5MjUgMTIuMTIyMTc2MywyMy4xNDUyNjA2IDEyLjExNTYzNjUsMjMuMTUyNTk1NCBMMTIuMTA5OTE3MywyMy4xNjY1MzMxIEwxMi4wNzU3NzE0LDIzLjc4MTE2MzkgQzEyLjA3NTEzMjMsMjMuNzkyNjYzOSAxMi4wODI4MDk5LDIzLjgwMTg2MDIgMTIuMDkyNjQ4MSwyMy44MDQ1Njc2IEwxMi4xMDgyNTYsMjMuODAzMjM4OSBMMTIuMzA5MjEwNiwyMy43MTA0OTMxIEwxMi4zMTg2NDk3LDIzLjcwMjQzNDcgTDEyLjMxODY0OTcsMjMuNzAyNDM0NyBMMTIuMzIyNTA0MywyMy42OTA2Mzg5IEwxMi4zNDA0MDEsMjMuMjYxMTExNCBMMTIuMzM3MjQ1LDIzLjI0ODUxNzYgTDEyLjMzNzI0NSwyMy4yNDg1MTc2IEwxMi4zMjc3NTMxLDIzLjIzOTY1OTcgTDEyLjE0MzA0NzMsMjMuMTQ3MzA3MiBaIiBpZD0iTWluZ0N1dGUiIGZpbGwtcnVsZT0ibm9uemVybyI+IDwvcGF0aD4gPHBhdGggZD0iTTEzLDIgQzE0LjY1NjksMiAxNiwzLjM0MzE1IDE2LDUgQzE2LDYuNDM3NDI3MiAxNC45ODkwOTcsNy42Mzg3MzEyNiAxMy42Mzk0MjQ4LDcuOTMxNzE2MzIgTDEzLjQ2OSw3Ljk2MzU2IEwxNC45MDQ5LDEwLjI2MSBMMTYuNjI4Niw5LjU3MTU0IEMxNy4xNDE0LDkuMzY2NDMgMTcuNzIzNCw5LjYxNTg0IDE3LjkyODUsMTAuMTI4NiBDMTguMTE4OTUsMTAuNjA0NzcxNCAxNy45MTc1MDk3LDExLjE0MDYxMDIgMTcuNDc3MTg0NCwxMS4zNzg5NDM3IEwxNy4zNzE0LDExLjQyODUgTDE1LjY0NzcsMTIuMTE4IEMxNC44MDE4NjQ3LDEyLjQ1NjM1MjkgMTMuODQyMjkxLDEyLjE3ODg4ODYgMTMuMzA0NjM1MywxMS40NjA3Njg3IEwxMy4yMDg5LDExLjMyMSBMMTMuMDQ2MywxMS4wNjA5IEwxMi40NDAzLDEzLjQ4NTEgQzEyLjM4NjA2LDEzLjcwMTkgMTIuMjk4MzQ4LDEzLjkwMTU0OCAxMi4xODQwNzYsMTQuMDc5ODQ1NiBMMTIuMDkzNSwxNC4yMDk1IEwxMy43NDY4LDE1LjQzNzcgQzE0LjE0MzA2NjcsMTUuNzMyMDExMSAxNC40MTQ2NTE5LDE2LjE2MTAzODMgMTQuNTEzMjM1MSwxNi42NDAzNjEyIEwxNC41NDIsMTYuODIyMyBMMTQuODk1LDIwIEwxNSwyMCBDMTUuNTUyMywyMCAxNiwyMC40NDc3IDE2LDIxIEMxNiwyMS41MTI4NSAxNS42MTM5NzMsMjEuOTM1NTA5MiAxNS4xMTY2MjM5LDIxLjk5MzI3MjUgTDE1LDIyIEwxNC4wODk1LDIyIEMxMy41NjkwMzU3LDIyIDEzLjEyNTgyODYsMjEuNjM2NjUgMTMuMDE1NjA4MSwyMS4xMzg2OTc0IEwxMi45OTYyLDIxLjAyMTUgTDEyLjU1NDIsMTcuMDQzMSBMOS40MDM2OCwxNC43MDI4IEM5LjM0NjcxLDE0LjY2MDUgOS4yOTU1MywxNC42MTMyIDkuMjUwMywxNC41NjIxIEM4LjY5ODUxMzMzLDE0LjEyMDE2NjcgOC40MDQ2MzY1MywxMy40MDE5MTY5IDguNTI3MDU3MzUsMTIuNjcxNTA2NCBMOC41NTk3MiwxMi41MTQ5IEw5LjM1Mzk5LDkuMzM3ODUgTDcuNzg0NTQsOS44MDg2OSBMNi45NDg2OCwxMi4zMTYyIEM2Ljc3NDA0LDEyLjg0MDIgNi4yMDc3MiwxMy4xMjM0IDUuNjgzNzcsMTIuOTQ4NyBDNS4xOTcyNTQyOSwxMi43ODY1NzE0IDQuOTE4MzQ5OSwxMi4yODY2MTUzIDUuMDIwODIzMiwxMS43OTY1NTY1IEw1LjA1MTMyLDExLjY4MzggTDUuODg3MTcsOS4xNzYyMyBDNi4wNzU4MzgzMyw4LjYxMDIxNTgzIDYuNTA2MTc4OTYsOC4xNjA4MDcwMSA3LjA1Njc4NDM0LDcuOTQ1NzgzMTggTDcuMjA5ODQsNy44OTMwNCBMMTAuNjQ3NCw2Ljg2MTc2IEMxMC4yNDIxLDYuMzUwMjIgMTAsNS43MDMzOCAxMCw1IEMxMCwzLjM0MzE1IDExLjM0MzEsMiAxMywyIFogTTkuNiwxNS4yIEMxMC4wNDE4LDE1LjUzMTQgMTAuMTMxNCwxNi4xNTgyIDkuOCwxNi42IEw4LjU4MzgsMTguMjIxNiBDOC4xMDYxNCwxOC44NTg1IDcuMjE0MTQsMTkuMDExMyA2LjU1MTc1LDE4LjU2OTcgTDQuNjIxOTcsMTcuMjgzMiBDNC4yMjkzOSwxNy41OTU3IDMuNjU2MTYsMTcuNTcwNCAzLjI5Mjg5LDE3LjIwNzEgQzIuOTAyMzcsMTYuODE2NiAyLjkwMjM3LDE2LjE4MzQgMy4yOTI4OSwxNS43OTI5IEwzLjc4NzEsMTUuMjk4NyBDNC4xMjc1MywxNC45NTgzIDQuNjYwOTQsMTQuOTA1NSA1LjA2MTUyLDE1LjE3MjUgTDcuMjY3NTksMTYuNjQzMiBMOC4yLDE1LjQgQzguNTMxMzcsMTQuOTU4MiA5LjE1ODE3LDE0Ljg2ODYgOS42LDE1LjIgWiIgaWQ9IuW9oueKtiIgZmlsbD0iIzI4NmI5ZiI+IDwvcGF0aD4gPC9nPiA8L2c+IDwvZz4gPC9nPgoNPC9zdmc+" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr><td headers="Men stub_1_9 stub_1" class="gt_row gt_left gt_stub gt_indent_2">Dionicio Cerón</td>
 <td headers="Men stub_1_9 country_code" class="gt_row gt_left"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>Mexico</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#eee" d="M144 0h223l33 256-33 256H144l-32-256z"></path><path fill="#496e2d" d="M0 0h144v512H0z"></path><path fill="#d80027" d="M368 0h144v512H368z"></path><path fill="#ffda44" d="M256 277v10h12l10-22z"></path><path fill="#496e2d" d="M160 242a96 96 0 0 0 192 0h-11a85 85 0 0 1-170 0zm39 17-4 2c-2 2-2 6 1 8 15 14 34 22 54 24v17h12v-17c20-2 39-10 54-24 3-2 3-6 1-8s-6-2-8 0a78 78 0 0 1-53 21c-19 0-38-8-53-21z"></path><path fill="#338af3" d="M256 316c-14 0-28-5-40-13l6-9c20 13 48 13 68 0l7 9c-12 8-26 13-41 13z"></path><path fill="#751a46" d="M256 174c22 11 12 33 11 34l-2-4c-5-11-18-18-31-18v11c6 0 11 5 11 11-7 7-9 17-4 26l4 8-13 23 29-7 18 18v-11l11 11 23-11-35-21-5-21 28 16c4 11 12 21 23 26 9-83-42-91-61-91z"></path><path fill="#6da544" d="M222 271c-15 0-33-12-38-40l11-2c4 23 18 31 27 31 3 0 5-1 6-3 0-2 0-3-6-5-3-1-7-2-10-5-10-12 4-24 11-30 1-1 2-2 1-3 0 0-2-2-5-2-7 0-12-4-14-11-2-6 2-13 8-17l5 11c-2 0-2 2-2 4 0 0 1 2 3 2 7 0 14 4 16 9 1 3 2 9-5 15-7 7-11 12-9 15l5 1c5 2 14 5 13 17-1 8-8 13-17 13h-1z"></path><path fill="#ffda44" d="m234 186-12 11v11l18-9c3-1 3-5 1-7z"></path><circle cx="172" cy="275" r="8" fill="#ffda44"></circle><circle cx="189" cy="302" r="8" fill="#ffda44"></circle><circle cx="216" cy="323" r="8" fill="#ffda44"></circle><circle cx="297" cy="323" r="8" fill="#ffda44"></circle><circle cx="324" cy="302" r="8" fill="#ffda44"></circle><circle cx="341" cy="275" r="8" fill="#ffda44"></circle><rect width="34" height="22" x="239" y="299" fill="#ff9811" rx="11" ry="11"></rect></g></svg></span></td>
 <td headers="Men stub_1_9 nationality" class="gt_row gt_left">Mexico</td>
-<td headers="Men stub_1_9 n_wins" class="gt_row gt_center" style="background-color: rgba(251,227,194,0.7); color: #000000;">3</td>
+<td headers="Men stub_1_9 n_wins" class="gt_row gt_center" style="background-color: rgba(249,228,235,0.7); color: #000000;">3</td>
 <td headers="Men stub_1_9 time" class="gt_row gt_center">02:08:30</td>
-<td headers="Men stub_1_9 year" class="gt_row gt_center">1995</td></tr>
+<td headers="Men stub_1_9 year" class="gt_row gt_center">1995</td>
+<td headers="Men stub_1_9 category_icon" class="gt_row gt_left"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBmaWxsPSIjMDAwMDAwIj4KDTxnIGlkPSJTVkdSZXBvX2JnQ2FycmllciIgc3Ryb2tlLXdpZHRoPSIwIi8+Cg08ZyBpZD0iU1ZHUmVwb190cmFjZXJDYXJyaWVyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KDTxnIGlkPSJTVkdSZXBvX2ljb25DYXJyaWVyIj4gPHRpdGxlPnJ1bl9maWxsPC90aXRsZT4gPGcgaWQ9Iumhtemdoi0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gPGcgaWQ9IlRyYW5zcG9ydCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTgxNi4wMDAwMDAsIC00OC4wMDAwMDApIiBmaWxsLXJ1bGU9Im5vbnplcm8iPiA8ZyBpZD0icnVuX2ZpbGwiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDgxNi4wMDAwMDAsIDQ4LjAwMDAwMCkiPiA8cGF0aCBkPSJNMjQsMCBMMjQsMjQgTDAsMjQgTDAsMCBMMjQsMCBaIE0xMi41OTM0OTAxLDIzLjI1Nzg0MSBMMTIuNTgxOTQwMiwyMy4yNTk1MTMxIEwxMi41MTA4Nzc3LDIzLjI5NTA0MzkgTDEyLjQ5MTg3OTEsMjMuMjk4NzQ2OSBMMTIuNDkxODc5MSwyMy4yOTg3NDY5IEwxMi40NzY3MTUyLDIzLjI5NTA0MzkgTDEyLjQwNTY1NDgsMjMuMjU5NTEzMSBDMTIuMzk1ODIyOSwyMy4yNTYzNjYyIDEyLjM4NzA0OTMsMjMuMjU5MDIzNSAxMi4zODIxNDIxLDIzLjI2NDkwNzQgTDEyLjM3ODAzMjMsMjMuMjc1ODMxIEwxMi4zNjA5NDEsMjMuNzAzMTA5NyBMMTIuMzY1ODk0NywyMy43MjM0OTk0IEwxMi4zNzY5MDQ4LDIzLjczNTcxMzkgTDEyLjQ4MDQ3NzcsMjMuODA5NjkzMSBMMTIuNDk1MzQ5MSwyMy44MTM2MTM0IEwxMi40OTUzNDkxLDIzLjgxMzYxMzQgTDEyLjUwNzExNTIsMjMuODA5NjkzMSBMMTIuNjEwNjkwMiwyMy43MzU3MTM5IEwxMi42MjMyOTM4LDIzLjcxOTY3MzMgTDEyLjYyMzI5MzgsMjMuNzE5NjczMyBMMTIuNjI2NjUyNywyMy43MDMxMDk3IEwxMi42MDk1NjEsMjMuMjc1ODMxIEMxMi42MDc1NzI0LDIzLjI2NTcwMTMgMTIuNjAxMDExMiwyMy4yNTkyOTkzIDEyLjU5MzQ5MDEsMjMuMjU3ODQxIEwxMi41OTM0OTAxLDIzLjI1Nzg0MSBaIE0xMi44NTgzOTA2LDIzLjE0NTI4NjIgTDEyLjg0NDU0ODUsMjMuMTQ3MzA3MiBMMTIuNjU5ODQ0MywyMy4yMzk2NTk3IEwxMi42NDk4ODIyLDIzLjI0OTkwNTIgTDEyLjY0OTg4MjIsMjMuMjQ5OTA1MiBMMTIuNjQ3MTk0MywyMy4yNjExMTE0IEwxMi42NjUwOTQzLDIzLjY5MDYzODkgTDEyLjY2OTkzNDksMjMuNzAzNDE3OCBMMTIuNjY5OTM0OSwyMy43MDM0MTc4IEwxMi42NzgzODYsMjMuNzEwNDkzMSBMMTIuODc5MzQwMiwyMy44MDMyMzg5IEMxMi44OTE0Mjg1LDIzLjgwNjg5OTkgMTIuOTAyMjMzMywyMy44MDI5ODc1IDEyLjkwNzgyODYsMjMuNzk1MjI2NCBMMTIuOTExODIzNSwyMy43ODExNjM5IEwxMi44Nzc2Nzc3LDIzLjE2NjUzMzEgQzEyLjg3NTI4ODIsMjMuMTU0NTg5NyAxMi44Njc0MTAyLDIzLjE0NzAwMTYgMTIuODU4MzkwNiwyMy4xNDUyODYyIEwxMi44NTgzOTA2LDIzLjE0NTI4NjIgWiBNMTIuMTQzMDQ3MywyMy4xNDczMDcyIEMxMi4xMzMyMTc4LDIzLjE0MjM5MjUgMTIuMTIyMTc2MywyMy4xNDUyNjA2IDEyLjExNTYzNjUsMjMuMTUyNTk1NCBMMTIuMTA5OTE3MywyMy4xNjY1MzMxIEwxMi4wNzU3NzE0LDIzLjc4MTE2MzkgQzEyLjA3NTEzMjMsMjMuNzkyNjYzOSAxMi4wODI4MDk5LDIzLjgwMTg2MDIgMTIuMDkyNjQ4MSwyMy44MDQ1Njc2IEwxMi4xMDgyNTYsMjMuODAzMjM4OSBMMTIuMzA5MjEwNiwyMy43MTA0OTMxIEwxMi4zMTg2NDk3LDIzLjcwMjQzNDcgTDEyLjMxODY0OTcsMjMuNzAyNDM0NyBMMTIuMzIyNTA0MywyMy42OTA2Mzg5IEwxMi4zNDA0MDEsMjMuMjYxMTExNCBMMTIuMzM3MjQ1LDIzLjI0ODUxNzYgTDEyLjMzNzI0NSwyMy4yNDg1MTc2IEwxMi4zMjc3NTMxLDIzLjIzOTY1OTcgTDEyLjE0MzA0NzMsMjMuMTQ3MzA3MiBaIiBpZD0iTWluZ0N1dGUiIGZpbGwtcnVsZT0ibm9uemVybyI+IDwvcGF0aD4gPHBhdGggZD0iTTEzLDIgQzE0LjY1NjksMiAxNiwzLjM0MzE1IDE2LDUgQzE2LDYuNDM3NDI3MiAxNC45ODkwOTcsNy42Mzg3MzEyNiAxMy42Mzk0MjQ4LDcuOTMxNzE2MzIgTDEzLjQ2OSw3Ljk2MzU2IEwxNC45MDQ5LDEwLjI2MSBMMTYuNjI4Niw5LjU3MTU0IEMxNy4xNDE0LDkuMzY2NDMgMTcuNzIzNCw5LjYxNTg0IDE3LjkyODUsMTAuMTI4NiBDMTguMTE4OTUsMTAuNjA0NzcxNCAxNy45MTc1MDk3LDExLjE0MDYxMDIgMTcuNDc3MTg0NCwxMS4zNzg5NDM3IEwxNy4zNzE0LDExLjQyODUgTDE1LjY0NzcsMTIuMTE4IEMxNC44MDE4NjQ3LDEyLjQ1NjM1MjkgMTMuODQyMjkxLDEyLjE3ODg4ODYgMTMuMzA0NjM1MywxMS40NjA3Njg3IEwxMy4yMDg5LDExLjMyMSBMMTMuMDQ2MywxMS4wNjA5IEwxMi40NDAzLDEzLjQ4NTEgQzEyLjM4NjA2LDEzLjcwMTkgMTIuMjk4MzQ4LDEzLjkwMTU0OCAxMi4xODQwNzYsMTQuMDc5ODQ1NiBMMTIuMDkzNSwxNC4yMDk1IEwxMy43NDY4LDE1LjQzNzcgQzE0LjE0MzA2NjcsMTUuNzMyMDExMSAxNC40MTQ2NTE5LDE2LjE2MTAzODMgMTQuNTEzMjM1MSwxNi42NDAzNjEyIEwxNC41NDIsMTYuODIyMyBMMTQuODk1LDIwIEwxNSwyMCBDMTUuNTUyMywyMCAxNiwyMC40NDc3IDE2LDIxIEMxNiwyMS41MTI4NSAxNS42MTM5NzMsMjEuOTM1NTA5MiAxNS4xMTY2MjM5LDIxLjk5MzI3MjUgTDE1LDIyIEwxNC4wODk1LDIyIEMxMy41NjkwMzU3LDIyIDEzLjEyNTgyODYsMjEuNjM2NjUgMTMuMDE1NjA4MSwyMS4xMzg2OTc0IEwxMi45OTYyLDIxLjAyMTUgTDEyLjU1NDIsMTcuMDQzMSBMOS40MDM2OCwxNC43MDI4IEM5LjM0NjcxLDE0LjY2MDUgOS4yOTU1MywxNC42MTMyIDkuMjUwMywxNC41NjIxIEM4LjY5ODUxMzMzLDE0LjEyMDE2NjcgOC40MDQ2MzY1MywxMy40MDE5MTY5IDguNTI3MDU3MzUsMTIuNjcxNTA2NCBMOC41NTk3MiwxMi41MTQ5IEw5LjM1Mzk5LDkuMzM3ODUgTDcuNzg0NTQsOS44MDg2OSBMNi45NDg2OCwxMi4zMTYyIEM2Ljc3NDA0LDEyLjg0MDIgNi4yMDc3MiwxMy4xMjM0IDUuNjgzNzcsMTIuOTQ4NyBDNS4xOTcyNTQyOSwxMi43ODY1NzE0IDQuOTE4MzQ5OSwxMi4yODY2MTUzIDUuMDIwODIzMiwxMS43OTY1NTY1IEw1LjA1MTMyLDExLjY4MzggTDUuODg3MTcsOS4xNzYyMyBDNi4wNzU4MzgzMyw4LjYxMDIxNTgzIDYuNTA2MTc4OTYsOC4xNjA4MDcwMSA3LjA1Njc4NDM0LDcuOTQ1NzgzMTggTDcuMjA5ODQsNy44OTMwNCBMMTAuNjQ3NCw2Ljg2MTc2IEMxMC4yNDIxLDYuMzUwMjIgMTAsNS43MDMzOCAxMCw1IEMxMCwzLjM0MzE1IDExLjM0MzEsMiAxMywyIFogTTkuNiwxNS4yIEMxMC4wNDE4LDE1LjUzMTQgMTAuMTMxNCwxNi4xNTgyIDkuOCwxNi42IEw4LjU4MzgsMTguMjIxNiBDOC4xMDYxNCwxOC44NTg1IDcuMjE0MTQsMTkuMDExMyA2LjU1MTc1LDE4LjU2OTcgTDQuNjIxOTcsMTcuMjgzMiBDNC4yMjkzOSwxNy41OTU3IDMuNjU2MTYsMTcuNTcwNCAzLjI5Mjg5LDE3LjIwNzEgQzIuOTAyMzcsMTYuODE2NiAyLjkwMjM3LDE2LjE4MzQgMy4yOTI4OSwxNS43OTI5IEwzLjc4NzEsMTUuMjk4NyBDNC4xMjc1MywxNC45NTgzIDQuNjYwOTQsMTQuOTA1NSA1LjA2MTUyLDE1LjE3MjUgTDcuMjY3NTksMTYuNjQzMiBMOC4yLDE1LjQgQzguNTMxMzcsMTQuOTU4MiA5LjE1ODE3LDE0Ljg2ODYgOS42LDE1LjIgWiIgaWQ9IuW9oueKtiIgZmlsbD0iIzI4NmI5ZiI+IDwvcGF0aD4gPC9nPiA8L2c+IDwvZz4gPC9nPgoNPC9zdmc+" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr class="gt_group_heading_row">
-      <th colspan="6" class="gt_group_heading" scope="colgroup" id="Women">Women</th>
+      <th colspan="7" class="gt_group_heading" scope="colgroup" id="Women">Women</th>
     </tr>
     <tr class="gt_row_group_first"><td headers="Women stub_1_10 stub_1" class="gt_row gt_left gt_stub gt_indent_2">Ingrid Kristiansen</td>
 <td headers="Women stub_1_10 country_code" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>Norway</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#d80027" d="M0 0h100.2l66.1 53.5L233.7 0H512v189.3L466.3 257l45.7 65.8V512H233.7l-68-50.7-65.5 50.7H0V322.8l51.4-68.5-51.4-65z"></path><path fill="#eee" d="M100.2 0v189.3H0v33.4l24.6 33L0 289.5v33.4h100.2V512h33.4l30.6-26.3 36.1 26.3h33.4V322.8H512v-33.4l-24.6-33.7 24.6-33v-33.4H233.7V0h-33.4l-33.8 25.3L133.6 0z"></path><path fill="#0052b4" d="M133.6 0v222.7H0v66.7h133.6V512h66.7V289.4H512v-66.7H200.3V0z"></path></g></svg></span></td>
 <td headers="Women stub_1_10 nationality" class="gt_row gt_left gt_striped">Norway</td>
-<td headers="Women stub_1_10 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(243,197,152,0.7); color: #000000;">4</td>
+<td headers="Women stub_1_10 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(247,185,203,0.7); color: #000000;">4</td>
 <td headers="Women stub_1_10 time" class="gt_row gt_center gt_striped">02:21:06</td>
-<td headers="Women stub_1_10 year" class="gt_row gt_center gt_striped">1985</td></tr>
+<td headers="Women stub_1_10 year" class="gt_row gt_center gt_striped">1985</td>
+<td headers="Women stub_1_10 category_icon" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBmaWxsPSIjMDAwMDAwIj4KDTxnIGlkPSJTVkdSZXBvX2JnQ2FycmllciIgc3Ryb2tlLXdpZHRoPSIwIi8+Cg08ZyBpZD0iU1ZHUmVwb190cmFjZXJDYXJyaWVyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KDTxnIGlkPSJTVkdSZXBvX2ljb25DYXJyaWVyIj4gPHRpdGxlPnJ1bl9maWxsPC90aXRsZT4gPGcgaWQ9Iumhtemdoi0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gPGcgaWQ9IlRyYW5zcG9ydCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTgxNi4wMDAwMDAsIC00OC4wMDAwMDApIiBmaWxsLXJ1bGU9Im5vbnplcm8iPiA8ZyBpZD0icnVuX2ZpbGwiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDgxNi4wMDAwMDAsIDQ4LjAwMDAwMCkiPiA8cGF0aCBkPSJNMjQsMCBMMjQsMjQgTDAsMjQgTDAsMCBMMjQsMCBaIE0xMi41OTM0OTAxLDIzLjI1Nzg0MSBMMTIuNTgxOTQwMiwyMy4yNTk1MTMxIEwxMi41MTA4Nzc3LDIzLjI5NTA0MzkgTDEyLjQ5MTg3OTEsMjMuMjk4NzQ2OSBMMTIuNDkxODc5MSwyMy4yOTg3NDY5IEwxMi40NzY3MTUyLDIzLjI5NTA0MzkgTDEyLjQwNTY1NDgsMjMuMjU5NTEzMSBDMTIuMzk1ODIyOSwyMy4yNTYzNjYyIDEyLjM4NzA0OTMsMjMuMjU5MDIzNSAxMi4zODIxNDIxLDIzLjI2NDkwNzQgTDEyLjM3ODAzMjMsMjMuMjc1ODMxIEwxMi4zNjA5NDEsMjMuNzAzMTA5NyBMMTIuMzY1ODk0NywyMy43MjM0OTk0IEwxMi4zNzY5MDQ4LDIzLjczNTcxMzkgTDEyLjQ4MDQ3NzcsMjMuODA5NjkzMSBMMTIuNDk1MzQ5MSwyMy44MTM2MTM0IEwxMi40OTUzNDkxLDIzLjgxMzYxMzQgTDEyLjUwNzExNTIsMjMuODA5NjkzMSBMMTIuNjEwNjkwMiwyMy43MzU3MTM5IEwxMi42MjMyOTM4LDIzLjcxOTY3MzMgTDEyLjYyMzI5MzgsMjMuNzE5NjczMyBMMTIuNjI2NjUyNywyMy43MDMxMDk3IEwxMi42MDk1NjEsMjMuMjc1ODMxIEMxMi42MDc1NzI0LDIzLjI2NTcwMTMgMTIuNjAxMDExMiwyMy4yNTkyOTkzIDEyLjU5MzQ5MDEsMjMuMjU3ODQxIEwxMi41OTM0OTAxLDIzLjI1Nzg0MSBaIE0xMi44NTgzOTA2LDIzLjE0NTI4NjIgTDEyLjg0NDU0ODUsMjMuMTQ3MzA3MiBMMTIuNjU5ODQ0MywyMy4yMzk2NTk3IEwxMi42NDk4ODIyLDIzLjI0OTkwNTIgTDEyLjY0OTg4MjIsMjMuMjQ5OTA1MiBMMTIuNjQ3MTk0MywyMy4yNjExMTE0IEwxMi42NjUwOTQzLDIzLjY5MDYzODkgTDEyLjY2OTkzNDksMjMuNzAzNDE3OCBMMTIuNjY5OTM0OSwyMy43MDM0MTc4IEwxMi42NzgzODYsMjMuNzEwNDkzMSBMMTIuODc5MzQwMiwyMy44MDMyMzg5IEMxMi44OTE0Mjg1LDIzLjgwNjg5OTkgMTIuOTAyMjMzMywyMy44MDI5ODc1IDEyLjkwNzgyODYsMjMuNzk1MjI2NCBMMTIuOTExODIzNSwyMy43ODExNjM5IEwxMi44Nzc2Nzc3LDIzLjE2NjUzMzEgQzEyLjg3NTI4ODIsMjMuMTU0NTg5NyAxMi44Njc0MTAyLDIzLjE0NzAwMTYgMTIuODU4MzkwNiwyMy4xNDUyODYyIEwxMi44NTgzOTA2LDIzLjE0NTI4NjIgWiBNMTIuMTQzMDQ3MywyMy4xNDczMDcyIEMxMi4xMzMyMTc4LDIzLjE0MjM5MjUgMTIuMTIyMTc2MywyMy4xNDUyNjA2IDEyLjExNTYzNjUsMjMuMTUyNTk1NCBMMTIuMTA5OTE3MywyMy4xNjY1MzMxIEwxMi4wNzU3NzE0LDIzLjc4MTE2MzkgQzEyLjA3NTEzMjMsMjMuNzkyNjYzOSAxMi4wODI4MDk5LDIzLjgwMTg2MDIgMTIuMDkyNjQ4MSwyMy44MDQ1Njc2IEwxMi4xMDgyNTYsMjMuODAzMjM4OSBMMTIuMzA5MjEwNiwyMy43MTA0OTMxIEwxMi4zMTg2NDk3LDIzLjcwMjQzNDcgTDEyLjMxODY0OTcsMjMuNzAyNDM0NyBMMTIuMzIyNTA0MywyMy42OTA2Mzg5IEwxMi4zNDA0MDEsMjMuMjYxMTExNCBMMTIuMzM3MjQ1LDIzLjI0ODUxNzYgTDEyLjMzNzI0NSwyMy4yNDg1MTc2IEwxMi4zMjc3NTMxLDIzLjIzOTY1OTcgTDEyLjE0MzA0NzMsMjMuMTQ3MzA3MiBaIiBpZD0iTWluZ0N1dGUiIGZpbGwtcnVsZT0ibm9uemVybyI+IDwvcGF0aD4gPHBhdGggZD0iTTEzLDIgQzE0LjY1NjksMiAxNiwzLjM0MzE1IDE2LDUgQzE2LDYuNDM3NDI3MiAxNC45ODkwOTcsNy42Mzg3MzEyNiAxMy42Mzk0MjQ4LDcuOTMxNzE2MzIgTDEzLjQ2OSw3Ljk2MzU2IEwxNC45MDQ5LDEwLjI2MSBMMTYuNjI4Niw5LjU3MTU0IEMxNy4xNDE0LDkuMzY2NDMgMTcuNzIzNCw5LjYxNTg0IDE3LjkyODUsMTAuMTI4NiBDMTguMTE4OTUsMTAuNjA0NzcxNCAxNy45MTc1MDk3LDExLjE0MDYxMDIgMTcuNDc3MTg0NCwxMS4zNzg5NDM3IEwxNy4zNzE0LDExLjQyODUgTDE1LjY0NzcsMTIuMTE4IEMxNC44MDE4NjQ3LDEyLjQ1NjM1MjkgMTMuODQyMjkxLDEyLjE3ODg4ODYgMTMuMzA0NjM1MywxMS40NjA3Njg3IEwxMy4yMDg5LDExLjMyMSBMMTMuMDQ2MywxMS4wNjA5IEwxMi40NDAzLDEzLjQ4NTEgQzEyLjM4NjA2LDEzLjcwMTkgMTIuMjk4MzQ4LDEzLjkwMTU0OCAxMi4xODQwNzYsMTQuMDc5ODQ1NiBMMTIuMDkzNSwxNC4yMDk1IEwxMy43NDY4LDE1LjQzNzcgQzE0LjE0MzA2NjcsMTUuNzMyMDExMSAxNC40MTQ2NTE5LDE2LjE2MTAzODMgMTQuNTEzMjM1MSwxNi42NDAzNjEyIEwxNC41NDIsMTYuODIyMyBMMTQuODk1LDIwIEwxNSwyMCBDMTUuNTUyMywyMCAxNiwyMC40NDc3IDE2LDIxIEMxNiwyMS41MTI4NSAxNS42MTM5NzMsMjEuOTM1NTA5MiAxNS4xMTY2MjM5LDIxLjk5MzI3MjUgTDE1LDIyIEwxNC4wODk1LDIyIEMxMy41NjkwMzU3LDIyIDEzLjEyNTgyODYsMjEuNjM2NjUgMTMuMDE1NjA4MSwyMS4xMzg2OTc0IEwxMi45OTYyLDIxLjAyMTUgTDEyLjU1NDIsMTcuMDQzMSBMOS40MDM2OCwxNC43MDI4IEM5LjM0NjcxLDE0LjY2MDUgOS4yOTU1MywxNC42MTMyIDkuMjUwMywxNC41NjIxIEM4LjY5ODUxMzMzLDE0LjEyMDE2NjcgOC40MDQ2MzY1MywxMy40MDE5MTY5IDguNTI3MDU3MzUsMTIuNjcxNTA2NCBMOC41NTk3MiwxMi41MTQ5IEw5LjM1Mzk5LDkuMzM3ODUgTDcuNzg0NTQsOS44MDg2OSBMNi45NDg2OCwxMi4zMTYyIEM2Ljc3NDA0LDEyLjg0MDIgNi4yMDc3MiwxMy4xMjM0IDUuNjgzNzcsMTIuOTQ4NyBDNS4xOTcyNTQyOSwxMi43ODY1NzE0IDQuOTE4MzQ5OSwxMi4yODY2MTUzIDUuMDIwODIzMiwxMS43OTY1NTY1IEw1LjA1MTMyLDExLjY4MzggTDUuODg3MTcsOS4xNzYyMyBDNi4wNzU4MzgzMyw4LjYxMDIxNTgzIDYuNTA2MTc4OTYsOC4xNjA4MDcwMSA3LjA1Njc4NDM0LDcuOTQ1NzgzMTggTDcuMjA5ODQsNy44OTMwNCBMMTAuNjQ3NCw2Ljg2MTc2IEMxMC4yNDIxLDYuMzUwMjIgMTAsNS43MDMzOCAxMCw1IEMxMCwzLjM0MzE1IDExLjM0MzEsMiAxMywyIFogTTkuNiwxNS4yIEMxMC4wNDE4LDE1LjUzMTQgMTAuMTMxNCwxNi4xNTgyIDkuOCwxNi42IEw4LjU4MzgsMTguMjIxNiBDOC4xMDYxNCwxOC44NTg1IDcuMjE0MTQsMTkuMDExMyA2LjU1MTc1LDE4LjU2OTcgTDQuNjIxOTcsMTcuMjgzMiBDNC4yMjkzOSwxNy41OTU3IDMuNjU2MTYsMTcuNTcwNCAzLjI5Mjg5LDE3LjIwNzEgQzIuOTAyMzcsMTYuODE2NiAyLjkwMjM3LDE2LjE4MzQgMy4yOTI4OSwxNS43OTI5IEwzLjc4NzEsMTUuMjk4NyBDNC4xMjc1MywxNC45NTgzIDQuNjYwOTQsMTQuOTA1NSA1LjA2MTUyLDE1LjE3MjUgTDcuMjY3NTksMTYuNjQzMiBMOC4yLDE1LjQgQzguNTMxMzcsMTQuOTU4MiA5LjE1ODE3LDE0Ljg2ODYgOS42LDE1LjIgWiIgaWQ9IuW9oueKtiIgZmlsbD0iI2Q3NTBhZCI+IDwvcGF0aD4gPC9nPiA8L2c+IDwvZz4gPC9nPgoNPC9zdmc+" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr><td headers="Women stub_1_11 stub_1" class="gt_row gt_left gt_stub gt_indent_2">Katrin Dörre-Heinig</td>
 <td headers="Women stub_1_11 country_code" class="gt_row gt_left"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>Germany</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#ffda44" d="m0 345 256.7-25.5L512 345v167H0z"></path><path fill="#d80027" d="m0 167 255-23 257 23v178H0z"></path><path fill="#333" d="M0 0h512v167H0z"></path></g></svg></span></td>
 <td headers="Women stub_1_11 nationality" class="gt_row gt_left">Germany</td>
-<td headers="Women stub_1_11 n_wins" class="gt_row gt_center" style="background-color: rgba(251,227,194,0.7); color: #000000;">3</td>
+<td headers="Women stub_1_11 n_wins" class="gt_row gt_center" style="background-color: rgba(249,228,235,0.7); color: #000000;">3</td>
 <td headers="Women stub_1_11 time" class="gt_row gt_center">02:27:09</td>
-<td headers="Women stub_1_11 year" class="gt_row gt_center">1993</td></tr>
+<td headers="Women stub_1_11 year" class="gt_row gt_center">1993</td>
+<td headers="Women stub_1_11 category_icon" class="gt_row gt_left"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBmaWxsPSIjMDAwMDAwIj4KDTxnIGlkPSJTVkdSZXBvX2JnQ2FycmllciIgc3Ryb2tlLXdpZHRoPSIwIi8+Cg08ZyBpZD0iU1ZHUmVwb190cmFjZXJDYXJyaWVyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KDTxnIGlkPSJTVkdSZXBvX2ljb25DYXJyaWVyIj4gPHRpdGxlPnJ1bl9maWxsPC90aXRsZT4gPGcgaWQ9Iumhtemdoi0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gPGcgaWQ9IlRyYW5zcG9ydCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTgxNi4wMDAwMDAsIC00OC4wMDAwMDApIiBmaWxsLXJ1bGU9Im5vbnplcm8iPiA8ZyBpZD0icnVuX2ZpbGwiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDgxNi4wMDAwMDAsIDQ4LjAwMDAwMCkiPiA8cGF0aCBkPSJNMjQsMCBMMjQsMjQgTDAsMjQgTDAsMCBMMjQsMCBaIE0xMi41OTM0OTAxLDIzLjI1Nzg0MSBMMTIuNTgxOTQwMiwyMy4yNTk1MTMxIEwxMi41MTA4Nzc3LDIzLjI5NTA0MzkgTDEyLjQ5MTg3OTEsMjMuMjk4NzQ2OSBMMTIuNDkxODc5MSwyMy4yOTg3NDY5IEwxMi40NzY3MTUyLDIzLjI5NTA0MzkgTDEyLjQwNTY1NDgsMjMuMjU5NTEzMSBDMTIuMzk1ODIyOSwyMy4yNTYzNjYyIDEyLjM4NzA0OTMsMjMuMjU5MDIzNSAxMi4zODIxNDIxLDIzLjI2NDkwNzQgTDEyLjM3ODAzMjMsMjMuMjc1ODMxIEwxMi4zNjA5NDEsMjMuNzAzMTA5NyBMMTIuMzY1ODk0NywyMy43MjM0OTk0IEwxMi4zNzY5MDQ4LDIzLjczNTcxMzkgTDEyLjQ4MDQ3NzcsMjMuODA5NjkzMSBMMTIuNDk1MzQ5MSwyMy44MTM2MTM0IEwxMi40OTUzNDkxLDIzLjgxMzYxMzQgTDEyLjUwNzExNTIsMjMuODA5NjkzMSBMMTIuNjEwNjkwMiwyMy43MzU3MTM5IEwxMi42MjMyOTM4LDIzLjcxOTY3MzMgTDEyLjYyMzI5MzgsMjMuNzE5NjczMyBMMTIuNjI2NjUyNywyMy43MDMxMDk3IEwxMi42MDk1NjEsMjMuMjc1ODMxIEMxMi42MDc1NzI0LDIzLjI2NTcwMTMgMTIuNjAxMDExMiwyMy4yNTkyOTkzIDEyLjU5MzQ5MDEsMjMuMjU3ODQxIEwxMi41OTM0OTAxLDIzLjI1Nzg0MSBaIE0xMi44NTgzOTA2LDIzLjE0NTI4NjIgTDEyLjg0NDU0ODUsMjMuMTQ3MzA3MiBMMTIuNjU5ODQ0MywyMy4yMzk2NTk3IEwxMi42NDk4ODIyLDIzLjI0OTkwNTIgTDEyLjY0OTg4MjIsMjMuMjQ5OTA1MiBMMTIuNjQ3MTk0MywyMy4yNjExMTE0IEwxMi42NjUwOTQzLDIzLjY5MDYzODkgTDEyLjY2OTkzNDksMjMuNzAzNDE3OCBMMTIuNjY5OTM0OSwyMy43MDM0MTc4IEwxMi42NzgzODYsMjMuNzEwNDkzMSBMMTIuODc5MzQwMiwyMy44MDMyMzg5IEMxMi44OTE0Mjg1LDIzLjgwNjg5OTkgMTIuOTAyMjMzMywyMy44MDI5ODc1IDEyLjkwNzgyODYsMjMuNzk1MjI2NCBMMTIuOTExODIzNSwyMy43ODExNjM5IEwxMi44Nzc2Nzc3LDIzLjE2NjUzMzEgQzEyLjg3NTI4ODIsMjMuMTU0NTg5NyAxMi44Njc0MTAyLDIzLjE0NzAwMTYgMTIuODU4MzkwNiwyMy4xNDUyODYyIEwxMi44NTgzOTA2LDIzLjE0NTI4NjIgWiBNMTIuMTQzMDQ3MywyMy4xNDczMDcyIEMxMi4xMzMyMTc4LDIzLjE0MjM5MjUgMTIuMTIyMTc2MywyMy4xNDUyNjA2IDEyLjExNTYzNjUsMjMuMTUyNTk1NCBMMTIuMTA5OTE3MywyMy4xNjY1MzMxIEwxMi4wNzU3NzE0LDIzLjc4MTE2MzkgQzEyLjA3NTEzMjMsMjMuNzkyNjYzOSAxMi4wODI4MDk5LDIzLjgwMTg2MDIgMTIuMDkyNjQ4MSwyMy44MDQ1Njc2IEwxMi4xMDgyNTYsMjMuODAzMjM4OSBMMTIuMzA5MjEwNiwyMy43MTA0OTMxIEwxMi4zMTg2NDk3LDIzLjcwMjQzNDcgTDEyLjMxODY0OTcsMjMuNzAyNDM0NyBMMTIuMzIyNTA0MywyMy42OTA2Mzg5IEwxMi4zNDA0MDEsMjMuMjYxMTExNCBMMTIuMzM3MjQ1LDIzLjI0ODUxNzYgTDEyLjMzNzI0NSwyMy4yNDg1MTc2IEwxMi4zMjc3NTMxLDIzLjIzOTY1OTcgTDEyLjE0MzA0NzMsMjMuMTQ3MzA3MiBaIiBpZD0iTWluZ0N1dGUiIGZpbGwtcnVsZT0ibm9uemVybyI+IDwvcGF0aD4gPHBhdGggZD0iTTEzLDIgQzE0LjY1NjksMiAxNiwzLjM0MzE1IDE2LDUgQzE2LDYuNDM3NDI3MiAxNC45ODkwOTcsNy42Mzg3MzEyNiAxMy42Mzk0MjQ4LDcuOTMxNzE2MzIgTDEzLjQ2OSw3Ljk2MzU2IEwxNC45MDQ5LDEwLjI2MSBMMTYuNjI4Niw5LjU3MTU0IEMxNy4xNDE0LDkuMzY2NDMgMTcuNzIzNCw5LjYxNTg0IDE3LjkyODUsMTAuMTI4NiBDMTguMTE4OTUsMTAuNjA0NzcxNCAxNy45MTc1MDk3LDExLjE0MDYxMDIgMTcuNDc3MTg0NCwxMS4zNzg5NDM3IEwxNy4zNzE0LDExLjQyODUgTDE1LjY0NzcsMTIuMTE4IEMxNC44MDE4NjQ3LDEyLjQ1NjM1MjkgMTMuODQyMjkxLDEyLjE3ODg4ODYgMTMuMzA0NjM1MywxMS40NjA3Njg3IEwxMy4yMDg5LDExLjMyMSBMMTMuMDQ2MywxMS4wNjA5IEwxMi40NDAzLDEzLjQ4NTEgQzEyLjM4NjA2LDEzLjcwMTkgMTIuMjk4MzQ4LDEzLjkwMTU0OCAxMi4xODQwNzYsMTQuMDc5ODQ1NiBMMTIuMDkzNSwxNC4yMDk1IEwxMy43NDY4LDE1LjQzNzcgQzE0LjE0MzA2NjcsMTUuNzMyMDExMSAxNC40MTQ2NTE5LDE2LjE2MTAzODMgMTQuNTEzMjM1MSwxNi42NDAzNjEyIEwxNC41NDIsMTYuODIyMyBMMTQuODk1LDIwIEwxNSwyMCBDMTUuNTUyMywyMCAxNiwyMC40NDc3IDE2LDIxIEMxNiwyMS41MTI4NSAxNS42MTM5NzMsMjEuOTM1NTA5MiAxNS4xMTY2MjM5LDIxLjk5MzI3MjUgTDE1LDIyIEwxNC4wODk1LDIyIEMxMy41NjkwMzU3LDIyIDEzLjEyNTgyODYsMjEuNjM2NjUgMTMuMDE1NjA4MSwyMS4xMzg2OTc0IEwxMi45OTYyLDIxLjAyMTUgTDEyLjU1NDIsMTcuMDQzMSBMOS40MDM2OCwxNC43MDI4IEM5LjM0NjcxLDE0LjY2MDUgOS4yOTU1MywxNC42MTMyIDkuMjUwMywxNC41NjIxIEM4LjY5ODUxMzMzLDE0LjEyMDE2NjcgOC40MDQ2MzY1MywxMy40MDE5MTY5IDguNTI3MDU3MzUsMTIuNjcxNTA2NCBMOC41NTk3MiwxMi41MTQ5IEw5LjM1Mzk5LDkuMzM3ODUgTDcuNzg0NTQsOS44MDg2OSBMNi45NDg2OCwxMi4zMTYyIEM2Ljc3NDA0LDEyLjg0MDIgNi4yMDc3MiwxMy4xMjM0IDUuNjgzNzcsMTIuOTQ4NyBDNS4xOTcyNTQyOSwxMi43ODY1NzE0IDQuOTE4MzQ5OSwxMi4yODY2MTUzIDUuMDIwODIzMiwxMS43OTY1NTY1IEw1LjA1MTMyLDExLjY4MzggTDUuODg3MTcsOS4xNzYyMyBDNi4wNzU4MzgzMyw4LjYxMDIxNTgzIDYuNTA2MTc4OTYsOC4xNjA4MDcwMSA3LjA1Njc4NDM0LDcuOTQ1NzgzMTggTDcuMjA5ODQsNy44OTMwNCBMMTAuNjQ3NCw2Ljg2MTc2IEMxMC4yNDIxLDYuMzUwMjIgMTAsNS43MDMzOCAxMCw1IEMxMCwzLjM0MzE1IDExLjM0MzEsMiAxMywyIFogTTkuNiwxNS4yIEMxMC4wNDE4LDE1LjUzMTQgMTAuMTMxNCwxNi4xNTgyIDkuOCwxNi42IEw4LjU4MzgsMTguMjIxNiBDOC4xMDYxNCwxOC44NTg1IDcuMjE0MTQsMTkuMDExMyA2LjU1MTc1LDE4LjU2OTcgTDQuNjIxOTcsMTcuMjgzMiBDNC4yMjkzOSwxNy41OTU3IDMuNjU2MTYsMTcuNTcwNCAzLjI5Mjg5LDE3LjIwNzEgQzIuOTAyMzcsMTYuODE2NiAyLjkwMjM3LDE2LjE4MzQgMy4yOTI4OSwxNS43OTI5IEwzLjc4NzEsMTUuMjk4NyBDNC4xMjc1MywxNC45NTgzIDQuNjYwOTQsMTQuOTA1NSA1LjA2MTUyLDE1LjE3MjUgTDcuMjY3NTksMTYuNjQzMiBMOC4yLDE1LjQgQzguNTMxMzcsMTQuOTU4MiA5LjE1ODE3LDE0Ljg2ODYgOS42LDE1LjIgWiIgaWQ9IuW9oueKtiIgZmlsbD0iI2Q3NTBhZCI+IDwvcGF0aD4gPC9nPiA8L2c+IDwvZz4gPC9nPgoNPC9zdmc+" style="height:2em;vertical-align:middle;"></span></td></tr>
     <tr><td headers="Women stub_1_12 stub_1" class="gt_row gt_left gt_stub gt_indent_2">Mary Jepkosgei Keitany</td>
 <td headers="Women stub_1_12 country_code" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="512" height="512" viewBox="0 0 512 512" style="vertical-align:-0.125em;image-rendering:optimizeQuality;height:1em;width:1em;"><title>Kenya</title><mask id="a"><circle cx="256" cy="256" r="256" fill="#fff"></circle></mask><g mask="url(#a)"><path fill="#eee" d="m0 144.7 253.4-28.2L512 144.7V178l-36 76.4 36 79.6v33.3L254.7 400 0 367.3V334l39-78-39-78z"></path><path fill="#333" d="M0 0h512v144.7H0z"></path><path fill="#a2001d" d="M0 178h512v156H0z"></path><path fill="#496e2d" d="M0 367.3h512V512H0z"></path><path fill="#eee" d="m335.9 118.3-30.3-14-49.4 111.9-49.4-111.9-30.3 14L237.8 256l-61.3 137.7 30.3 14 49.4-111.9 49.4 111.9 30.3-14L274.6 256z"></path><path fill="#eee" d="M256.2 111.3s-7 5.8-16.7 16l-16 127.6 16 129.8c9.7 10.2 16.7 16 16.7 16s7-5.8 16.7-16l15-130.7-15-126.7c-9.7-10.2-16.7-16-16.7-16z"></path><path fill="#333" d="m311.9 179.2-10 75.5 10 78.1A158.6 158.6 0 0 0 334 256c0-28.2-9.7-54.5-22.2-76.8zm-111.4 0 8.9 74.3-9 79.3a158.6 158.6 0 0 1-22.1-76.8c0-28.2 9.7-54.5 22.2-76.8z"></path><path fill="#a2001d" d="M200.5 179.2v153.6a269 269 0 0 0 39 51.9V127.3c-11.4 12-26.6 30-39 52zm111.4 0a269 269 0 0 0-39-51.9v257.4c11.4-12 26.5-30 39-52V179.3z"></path></g></svg></span></td>
 <td headers="Women stub_1_12 nationality" class="gt_row gt_left gt_striped">Kenya</td>
-<td headers="Women stub_1_12 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(251,227,194,0.7); color: #000000;">3</td>
+<td headers="Women stub_1_12 n_wins" class="gt_row gt_center gt_striped" style="background-color: rgba(249,228,235,0.7); color: #000000;">3</td>
 <td headers="Women stub_1_12 time" class="gt_row gt_center gt_striped">02:17:01</td>
-<td headers="Women stub_1_12 year" class="gt_row gt_center gt_striped">2017</td></tr>
+<td headers="Women stub_1_12 year" class="gt_row gt_center gt_striped">2017</td>
+<td headers="Women stub_1_12 category_icon" class="gt_row gt_left gt_striped"><span style="white-space:nowrap;"><img src="data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBmaWxsPSIjMDAwMDAwIj4KDTxnIGlkPSJTVkdSZXBvX2JnQ2FycmllciIgc3Ryb2tlLXdpZHRoPSIwIi8+Cg08ZyBpZD0iU1ZHUmVwb190cmFjZXJDYXJyaWVyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KDTxnIGlkPSJTVkdSZXBvX2ljb25DYXJyaWVyIj4gPHRpdGxlPnJ1bl9maWxsPC90aXRsZT4gPGcgaWQ9Iumhtemdoi0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gPGcgaWQ9IlRyYW5zcG9ydCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTgxNi4wMDAwMDAsIC00OC4wMDAwMDApIiBmaWxsLXJ1bGU9Im5vbnplcm8iPiA8ZyBpZD0icnVuX2ZpbGwiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDgxNi4wMDAwMDAsIDQ4LjAwMDAwMCkiPiA8cGF0aCBkPSJNMjQsMCBMMjQsMjQgTDAsMjQgTDAsMCBMMjQsMCBaIE0xMi41OTM0OTAxLDIzLjI1Nzg0MSBMMTIuNTgxOTQwMiwyMy4yNTk1MTMxIEwxMi41MTA4Nzc3LDIzLjI5NTA0MzkgTDEyLjQ5MTg3OTEsMjMuMjk4NzQ2OSBMMTIuNDkxODc5MSwyMy4yOTg3NDY5IEwxMi40NzY3MTUyLDIzLjI5NTA0MzkgTDEyLjQwNTY1NDgsMjMuMjU5NTEzMSBDMTIuMzk1ODIyOSwyMy4yNTYzNjYyIDEyLjM4NzA0OTMsMjMuMjU5MDIzNSAxMi4zODIxNDIxLDIzLjI2NDkwNzQgTDEyLjM3ODAzMjMsMjMuMjc1ODMxIEwxMi4zNjA5NDEsMjMuNzAzMTA5NyBMMTIuMzY1ODk0NywyMy43MjM0OTk0IEwxMi4zNzY5MDQ4LDIzLjczNTcxMzkgTDEyLjQ4MDQ3NzcsMjMuODA5NjkzMSBMMTIuNDk1MzQ5MSwyMy44MTM2MTM0IEwxMi40OTUzNDkxLDIzLjgxMzYxMzQgTDEyLjUwNzExNTIsMjMuODA5NjkzMSBMMTIuNjEwNjkwMiwyMy43MzU3MTM5IEwxMi42MjMyOTM4LDIzLjcxOTY3MzMgTDEyLjYyMzI5MzgsMjMuNzE5NjczMyBMMTIuNjI2NjUyNywyMy43MDMxMDk3IEwxMi42MDk1NjEsMjMuMjc1ODMxIEMxMi42MDc1NzI0LDIzLjI2NTcwMTMgMTIuNjAxMDExMiwyMy4yNTkyOTkzIDEyLjU5MzQ5MDEsMjMuMjU3ODQxIEwxMi41OTM0OTAxLDIzLjI1Nzg0MSBaIE0xMi44NTgzOTA2LDIzLjE0NTI4NjIgTDEyLjg0NDU0ODUsMjMuMTQ3MzA3MiBMMTIuNjU5ODQ0MywyMy4yMzk2NTk3IEwxMi42NDk4ODIyLDIzLjI0OTkwNTIgTDEyLjY0OTg4MjIsMjMuMjQ5OTA1MiBMMTIuNjQ3MTk0MywyMy4yNjExMTE0IEwxMi42NjUwOTQzLDIzLjY5MDYzODkgTDEyLjY2OTkzNDksMjMuNzAzNDE3OCBMMTIuNjY5OTM0OSwyMy43MDM0MTc4IEwxMi42NzgzODYsMjMuNzEwNDkzMSBMMTIuODc5MzQwMiwyMy44MDMyMzg5IEMxMi44OTE0Mjg1LDIzLjgwNjg5OTkgMTIuOTAyMjMzMywyMy44MDI5ODc1IDEyLjkwNzgyODYsMjMuNzk1MjI2NCBMMTIuOTExODIzNSwyMy43ODExNjM5IEwxMi44Nzc2Nzc3LDIzLjE2NjUzMzEgQzEyLjg3NTI4ODIsMjMuMTU0NTg5NyAxMi44Njc0MTAyLDIzLjE0NzAwMTYgMTIuODU4MzkwNiwyMy4xNDUyODYyIEwxMi44NTgzOTA2LDIzLjE0NTI4NjIgWiBNMTIuMTQzMDQ3MywyMy4xNDczMDcyIEMxMi4xMzMyMTc4LDIzLjE0MjM5MjUgMTIuMTIyMTc2MywyMy4xNDUyNjA2IDEyLjExNTYzNjUsMjMuMTUyNTk1NCBMMTIuMTA5OTE3MywyMy4xNjY1MzMxIEwxMi4wNzU3NzE0LDIzLjc4MTE2MzkgQzEyLjA3NTEzMjMsMjMuNzkyNjYzOSAxMi4wODI4MDk5LDIzLjgwMTg2MDIgMTIuMDkyNjQ4MSwyMy44MDQ1Njc2IEwxMi4xMDgyNTYsMjMuODAzMjM4OSBMMTIuMzA5MjEwNiwyMy43MTA0OTMxIEwxMi4zMTg2NDk3LDIzLjcwMjQzNDcgTDEyLjMxODY0OTcsMjMuNzAyNDM0NyBMMTIuMzIyNTA0MywyMy42OTA2Mzg5IEwxMi4zNDA0MDEsMjMuMjYxMTExNCBMMTIuMzM3MjQ1LDIzLjI0ODUxNzYgTDEyLjMzNzI0NSwyMy4yNDg1MTc2IEwxMi4zMjc3NTMxLDIzLjIzOTY1OTcgTDEyLjE0MzA0NzMsMjMuMTQ3MzA3MiBaIiBpZD0iTWluZ0N1dGUiIGZpbGwtcnVsZT0ibm9uemVybyI+IDwvcGF0aD4gPHBhdGggZD0iTTEzLDIgQzE0LjY1NjksMiAxNiwzLjM0MzE1IDE2LDUgQzE2LDYuNDM3NDI3MiAxNC45ODkwOTcsNy42Mzg3MzEyNiAxMy42Mzk0MjQ4LDcuOTMxNzE2MzIgTDEzLjQ2OSw3Ljk2MzU2IEwxNC45MDQ5LDEwLjI2MSBMMTYuNjI4Niw5LjU3MTU0IEMxNy4xNDE0LDkuMzY2NDMgMTcuNzIzNCw5LjYxNTg0IDE3LjkyODUsMTAuMTI4NiBDMTguMTE4OTUsMTAuNjA0NzcxNCAxNy45MTc1MDk3LDExLjE0MDYxMDIgMTcuNDc3MTg0NCwxMS4zNzg5NDM3IEwxNy4zNzE0LDExLjQyODUgTDE1LjY0NzcsMTIuMTE4IEMxNC44MDE4NjQ3LDEyLjQ1NjM1MjkgMTMuODQyMjkxLDEyLjE3ODg4ODYgMTMuMzA0NjM1MywxMS40NjA3Njg3IEwxMy4yMDg5LDExLjMyMSBMMTMuMDQ2MywxMS4wNjA5IEwxMi40NDAzLDEzLjQ4NTEgQzEyLjM4NjA2LDEzLjcwMTkgMTIuMjk4MzQ4LDEzLjkwMTU0OCAxMi4xODQwNzYsMTQuMDc5ODQ1NiBMMTIuMDkzNSwxNC4yMDk1IEwxMy43NDY4LDE1LjQzNzcgQzE0LjE0MzA2NjcsMTUuNzMyMDExMSAxNC40MTQ2NTE5LDE2LjE2MTAzODMgMTQuNTEzMjM1MSwxNi42NDAzNjEyIEwxNC41NDIsMTYuODIyMyBMMTQuODk1LDIwIEwxNSwyMCBDMTUuNTUyMywyMCAxNiwyMC40NDc3IDE2LDIxIEMxNiwyMS41MTI4NSAxNS42MTM5NzMsMjEuOTM1NTA5MiAxNS4xMTY2MjM5LDIxLjk5MzI3MjUgTDE1LDIyIEwxNC4wODk1LDIyIEMxMy41NjkwMzU3LDIyIDEzLjEyNTgyODYsMjEuNjM2NjUgMTMuMDE1NjA4MSwyMS4xMzg2OTc0IEwxMi45OTYyLDIxLjAyMTUgTDEyLjU1NDIsMTcuMDQzMSBMOS40MDM2OCwxNC43MDI4IEM5LjM0NjcxLDE0LjY2MDUgOS4yOTU1MywxNC42MTMyIDkuMjUwMywxNC41NjIxIEM4LjY5ODUxMzMzLDE0LjEyMDE2NjcgOC40MDQ2MzY1MywxMy40MDE5MTY5IDguNTI3MDU3MzUsMTIuNjcxNTA2NCBMOC41NTk3MiwxMi41MTQ5IEw5LjM1Mzk5LDkuMzM3ODUgTDcuNzg0NTQsOS44MDg2OSBMNi45NDg2OCwxMi4zMTYyIEM2Ljc3NDA0LDEyLjg0MDIgNi4yMDc3MiwxMy4xMjM0IDUuNjgzNzcsMTIuOTQ4NyBDNS4xOTcyNTQyOSwxMi43ODY1NzE0IDQuOTE4MzQ5OSwxMi4yODY2MTUzIDUuMDIwODIzMiwxMS43OTY1NTY1IEw1LjA1MTMyLDExLjY4MzggTDUuODg3MTcsOS4xNzYyMyBDNi4wNzU4MzgzMyw4LjYxMDIxNTgzIDYuNTA2MTc4OTYsOC4xNjA4MDcwMSA3LjA1Njc4NDM0LDcuOTQ1NzgzMTggTDcuMjA5ODQsNy44OTMwNCBMMTAuNjQ3NCw2Ljg2MTc2IEMxMC4yNDIxLDYuMzUwMjIgMTAsNS43MDMzOCAxMCw1IEMxMCwzLjM0MzE1IDExLjM0MzEsMiAxMywyIFogTTkuNiwxNS4yIEMxMC4wNDE4LDE1LjUzMTQgMTAuMTMxNCwxNi4xNTgyIDkuOCwxNi42IEw4LjU4MzgsMTguMjIxNiBDOC4xMDYxNCwxOC44NTg1IDcuMjE0MTQsMTkuMDExMyA2LjU1MTc1LDE4LjU2OTcgTDQuNjIxOTcsMTcuMjgzMiBDNC4yMjkzOSwxNy41OTU3IDMuNjU2MTYsMTcuNTcwNCAzLjI5Mjg5LDE3LjIwNzEgQzIuOTAyMzcsMTYuODE2NiAyLjkwMjM3LDE2LjE4MzQgMy4yOTI4OSwxNS43OTI5IEwzLjc4NzEsMTUuMjk4NyBDNC4xMjc1MywxNC45NTgzIDQuNjYwOTQsMTQuOTA1NSA1LjA2MTUyLDE1LjE3MjUgTDcuMjY3NTksMTYuNjQzMiBMOC4yLDE1LjQgQzguNTMxMzcsMTQuOTU4MiA5LjE1ODE3LDE0Ljg2ODYgOS42LDE1LjIgWiIgaWQ9IuW9oueKtiIgZmlsbD0iI2Q3NTBhZCI+IDwvcGF0aD4gPC9nPiA8L2c+IDwvZz4gPC9nPgoNPC9zdmc+" style="height:2em;vertical-align:middle;"></span></td></tr>
   </tbody>
   
   
