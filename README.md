@@ -10,7 +10,7 @@ A content table summarizes my participations in TidyTuesday. These data vizzes a
 | map made in ggplot | [2020-01-28](https://github.com/Shuhanstack/tidytuesday-ss/tree/master/2020/01_28_20) | ![map](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/2020/01_28_20/SF%20tree%20map.jpg) |
 | ggplot with annotation and point highlight | [2020-01-07](https://github.com/Shuhanstack/tidytuesday-ss/tree/master/2020/01_07_20) | ![figure](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/2020/01_07_20/figure/annual_rainfall.jpg) |
 | colored wordcloud & {colorspace}| [2019-12-24](https://github.com/Shuhanstack/tidytuesday-ss/tree/master/2019/12_24_19) | ![figure1](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/2019/12_24_19/lyric%20wordcloud.png) ![figure2](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/2019/12_24_19/Popular%20performers.jpg)|
-| ggplot pie chart & {colorspace} , colorRampPalette(), scale_fill_brewer()| [2019-12-17](https://github.com/Shuhanstack/tidytuesday-ss/tree/master/2019/12_17_19) | ![demo-piechart](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/2019/12_17_19/figure/how%20old%20are%20the%20dogs.jpg) |
+| ggplot pie chart and map & {colorspace} and colorRampPalette()| [2019-12-17](https://github.com/Shuhanstack/tidytuesday-ss/tree/master/2019/12_17_19) | ![demo-piechart](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/2019/12_17_19/figure/how%20old%20are%20the%20dogs.jpg) ![map](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/2019/12_17_19/figure/total%20number%20of%20adoptable%20dogs.jpg) |
 
 
 ## Citation
