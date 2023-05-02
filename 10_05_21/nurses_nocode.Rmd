@@ -1,0 +1,132 @@
+---
+title: "Nurse"
+author: "Shuhan Song"
+date: "10/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE)
+
+library(tidyverse)
+library(tidylog)
+library(janitor)
+library(crosstalk)
+library(DT)
+```
+
+```{r, echo=F}
+nurses = read_csv(here::here("nurses.csv"))
+```
+
+
+**Extensions in DT**: https://rstudio.github.io/DT/extensions.html
+
+
+
+```{r, eval=F}
+colnames(nurses)
+```
+
+```{r}
+# select state, year, stats of hourly wage, stats of annual salary
+nurses_partial_hourly = nurses %>% 
+  select(state, year, hourly_10th_percentile, hourly_25th_percentile, hourly_wage_median, hourly_75th_percentile, hourly_90th_percentile)
+
+nurses_partial_annual = nurses %>% 
+  select(state, year, annual_10th_percentile, annual_25th_percentile, annual_salary_median, annual_75th_percentile, annual_90th_percentile)
+```
+
+```{r}
+sd_hourly = crosstalk::SharedData$new(nurses_partial_hourly, 
+                                      group = "nurse_wage") 
+sd_annual = crosstalk::SharedData$new(nurses_partial_annual, 
+                                      group = "nurse_wage") # sd_hourly and sd_annual are grouped together; a group will be filtered in the same way during filter_select and filter_slider below
+```
+
+```{r}
+# filter hourly wage
+crosstalk::filter_select(id = "state",
+              label = "State",
+              sharedData = sd_hourly,
+              multiple = TRUE, # can select multiple state
+              group = ~state # which variable will be used to filter the SharedData
+              )
+
+crosstalk::filter_slider(id = "year_selector",
+                         label = "Year",
+                         sharedData = sd_hourly,
+                         column = ~year, # which variable will be used to filter the SharedData
+                         step = 1,
+                         ticks = FALSE, # hide tick marks
+                         sep = ""
+                         )
+
+# since sd_hourly and sd_annual are grouped together, the filter applied to sd_hourly will also be applied to sd_annual
+```
+ 
+
+```{r}
+# hourly wage
+sd_hourly %>% 
+  DT::datatable(
+    filter = "top",
+    caption = "Nurse hourly wage ($/hour)",
+    rownames = FALSE, 
+    extensions = list(
+      "Buttons" # "Scroller": scroll down page rather than pagination. scroller
+    ),
+    options = list(
+      dom = "Blrtip",
+      buttons = list(
+        list(extend = "colvis",# column visibility
+             columns = c(2,3,5,6)), # which columns can be hid. index starts from 0
+        "csv",
+        "excel"
+        )
+    ),
+    colnames = c(
+      "State" = "state",
+      "Year" = "year",
+      "10th Percentile" = "hourly_10th_percentile",
+      "25th Percentile (Q1)" = "hourly_25th_percentile",
+      "50th Percentile (Median)" = "hourly_wage_median",
+      "75th Percentile (Q3)" = "hourly_75th_percentile",
+      "90th Percentile" = "hourly_90th_percentile"
+    ),
+    style = "bootstrap",
+    class = "compact"
+                )
+```
+
+
+```{r}
+# annual salary
+sd_annual %>% 
+  DT::datatable(
+    filter = "none",
+    caption = "Nurse annual salary ($/year)",
+    rownames = FALSE, 
+    extensions = "Buttons", # "Scroller": scroll down page rather than pagination. scroller
+    options = list(
+      dom = "Blrtip",
+      buttons = list(list(extend = "colvis",
+                          columns = c(2,3,5,6)),
+                     "copy", "csv","excel",'pdf', 'print')
+    ),
+    colnames = c(
+      "State" = "state",
+      "Year" = "year",
+      "10th Percentile" = "annual_10th_percentile",
+      "25th Percentile (Q1)" = "annual_25th_percentile",
+      "50th Percentile (Median)" = "annual_salary_median",
+      "75th Percentile (Q3)" = "annual_75th_percentile",
+      "90th Percentile" = "annual_90th_percentile"
+    ),
+    style = "bootstrap",
+    class = "compact"
+                )
+```
+
