@@ -1,0 +1,155 @@
+---
+title: "Weecology data"
+author: "Shuhan Song"
+date: "2023-05-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
+library(tidyverse)
+library(MetBrewer)
+library(ggtext)
+```
+
+```{r}
+plots <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-05-02/plots.csv')
+species <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-05-02/species.csv')
+surveys <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-05-02/surveys.csv')
+summary(surveys)
+```
+
+
+```{r}
+count(surveys, species)
+```
+
+```{r}
+species_by_year = surveys %>% 
+  count(year, treatment, species) %>% 
+  drop_na() %>% 
+  left_join(species %>% 
+              select(species:commonname),
+            by = "species") %>% 
+  filter(species %in% c("DM", "DO", "OL", "OT", "PB", 
+                        "PE", #"PF",
+                        "PM", "PP"#, "RM", 
+                        #"SF", "SH"
+                        )) %>% 
+  mutate(commonname = factor(commonname,
+                             levels = c("Bailey's pocket mouse",
+                                        "Deer Mouse",
+                                        "Merriam's kangaroo rat",
+                                        "Northern Grasshopper Mouse",
+                                        "Desert pocket mouse",
+                                        "Cactus mouse",
+                                        "Ord's kangaroo rat",
+                                        "Southern grasshopper mouse"),
+                             labels = c("Bailey's pocket mouse",
+                                        "Deer mouse",
+                                        "Merriam's kangaroo rat",
+                                        "Northern grasshopper mouse",
+                                        "Desert pocket mouse",
+                                        "Cactus mouse",
+                                        "Ord's kangaroo rat",
+                                        "Southern grasshopper mouse")))
+
+str(species_by_year)
+
+unique(species_by_year$commonname)
+surveys %>% 
+  count(treatment)
+```
+
+
+```{r fig.width=10}
+require(ggplot2); require(grid); require(png); require(RCurl)
+annotation_custom2 <- 
+function (grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, data){ layer(data = data, stat = StatIdentity, position = PositionIdentity, 
+        geom = ggplot2:::GeomCustomAnn,
+        inherit.aes = TRUE, params = list(grob = grob, 
+                                          xmin = xmin, xmax = xmax, 
+                                          ymin = ymin, ymax = ymax))}
+
+
+
+img1 = readPNG(here::here("2023", "2023-05-02", "rodent_picture", "Bailey's pocket mouse.png"))
+img2 = readPNG(here::here("2023", "2023-05-02", "rodent_picture", "Desert pocket mouse.png"))
+img3 = readPNG(here::here("2023", "2023-05-02", "rodent_picture", "Deer mouse.png"))
+img4 = readPNG(here::here("2023", "2023-05-02", "rodent_picture", "Cactus mouse.png"))
+img5 = readPNG(here::here("2023", "2023-05-02", "rodent_picture", "Merriam's kangaroo rat.png"))
+img6 = readPNG(here::here("2023", "2023-05-02", "rodent_picture", "Ord's kangaroo rat.png"))
+img7 = readPNG(here::here("2023", "2023-05-02", "rodent_picture", "northern grasshopper mouse.png"))
+img8 = readPNG(here::here("2023", "2023-05-02", "rodent_picture", "Southern grasshopper mouse.png"))
+
+
+a1 = annotation_custom2(rasterGrob(img1, interpolate=TRUE), xmin=1970, xmax=1990, ymin=200, ymax=500, 
+                        data=filter(species_by_year,
+                                    commonname == "Bailey's pocket mouse"))
+a2 = annotation_custom2(rasterGrob(img2, interpolate=TRUE), xmin=1970, xmax=1990, ymin=150, ymax=350, 
+                        data=filter(species_by_year,
+                                    commonname == "Desert pocket mouse"))
+a3 = annotation_custom2(rasterGrob(img3, interpolate=TRUE), xmin=2000, xmax=2020, ymin=30, ymax=52, 
+                        data=filter(species_by_year,
+                                    commonname == "Deer mouse"))
+a4 = annotation_custom2(rasterGrob(img4, interpolate=TRUE), xmin=1970, xmax=1985, ymin=25, ymax=40, 
+                        data=filter(species_by_year,
+                                    commonname == "Cactus mouse"))
+a5 = annotation_custom2(rasterGrob(img5, interpolate=TRUE), xmin=1970, xmax=1990, ymin=180, ymax=300, 
+                        data=filter(species_by_year,
+                                    commonname == "Merriam's kangaroo rat"))
+a6 = annotation_custom2(rasterGrob(img6, interpolate=TRUE), xmin=1970, xmax=1990, ymin=80, ymax=150, 
+                        data=filter(species_by_year,
+                                    commonname == "Ord's kangaroo rat"))
+a7 = annotation_custom2(rasterGrob(img7, interpolate=TRUE), xmin=1990, xmax=2010, ymin=19, ymax=30, 
+                        data=filter(species_by_year,
+                                    commonname == "Northern grasshopper mouse"))
+a8 = annotation_custom2(rasterGrob(img8, interpolate=TRUE), xmin=1970, xmax=1990, ymin=30, ymax=60, 
+                        data=filter(species_by_year,
+                                    commonname == "Southern grasshopper mouse"))
+```
+
+
+
+```{r fig.width=10}
+p = ggplot(species_by_year,
+       aes(x = year,
+           y = n)) +
+  geom_line(aes(color = treatment)) +
+  facet_wrap(~commonname,
+             scales = "free_y",
+             nrow = 2) + 
+  scale_color_manual(values = c("grey70", "blue", "red")) +
+  scale_x_continuous(limits = c(1970, max(species_by_year$year))) +
+  theme_minimal() +
+  theme(legend.position = "top",
+        aspect.ratio = 1/2) +
+  labs(x = "Year",
+       y = "Count",
+       title = "Time series of rodent counts in a Chihuahuan desert ecosystem",
+       subtitle = "Data collected by Weecology",
+       color = "Site treatment",
+       caption = "Both kangaroo rat species had much higher counts in control group than treatment groups. <br>
+       Fun facts: <b>Bailey's pocket mouse</b> is the only known animal to be able to digest the wax found inside the jojoba nut.") +
+  theme(text = element_text("Rockwell"),
+    plot.title = element_markdown(lineheight = 1.1),
+    legend.text = element_markdown(size = 10),
+    plot.caption = element_markdown(size = 10,
+                                    hjust = 0))
+
+
+
+p + a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8
+# To view all fonts installed:
+# systemfonts::system_fonts() |> View()
+```
+
+```{r}
+ggsave(here::here("2023", "2023-05-02", "viz.jpg"),
+       device = jpeg,
+       height = 7,
+       width = 10)
+```
+
