@@ -1,4 +1,4 @@
-# Tidytuesday 
+# TidyTuesday 
 
 A content table summarizes my participations in TidyTuesday. These data vizzes are made to demo workflows or try out new (versions of) libraries instead of making perfect products.
 
