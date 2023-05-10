@@ -4,6 +4,7 @@ A content table summarizes my participations in TidyTuesday. These data vizzes a
 
 | Technique highlights   | Which entry | Showcase |
 | -----------------------| ----------- | -------- |
+| {ggtext} & image annotation | [2023-05-02](https://github.com/Shuhanstack/MyTidyTuesday/tree/master/2023/2023-05-02) | ![figure](https://github.com/Shuhanstack/MyTidyTuesday/blob/master/2023/2023-05-02/viz.jpg) |
 | {gt} 0.9.0: use svg in tables and other customizations  | [2023-04-25](https://github.com/Shuhanstack/tidytuesday-ss/tree/master/2023/2023-04-25)  | ![table](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/2023/2023-04-25/table2.png) |
 | {sysfonts} and google font   | [2022-02-22](https://github.com/Shuhanstack/tidytuesday-ss/tree/master/02_22_22)         | ![figure](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/02_22_22/freedom_diff_across_countries.png) |
 | {crosstalk}: interactive html & {DT} extensions | [2021-10-05](https://github.com/Shuhanstack/tidytuesday-ss/tree/master/10_05_21)   | ![html-demo](https://github.com/Shuhanstack/tidytuesday-ss/blob/master/10_05_21/html_demo.png) |
